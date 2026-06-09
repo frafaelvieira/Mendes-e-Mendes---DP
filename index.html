@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atualização Cadastral — Mendes e Mendes</title>
+<style>
+  :root {
+    --azul: #0A4663;
+    --azul-medio: #0A4663;
+    --azul-claro: #e8f1f5;
+    --dourado: #a1c3cf;
+    --dourado-claro: #f0f6f8;
+    --cinza-borda: #b0b8b9;
+    --cinza-texto: #474947;
+    --verde: #0A4663;
+    --vermelho: #c53030;
+    --branco: #ffffff;
+    --fundo: #c3c4c5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--fundo);
+    color: var(--cinza-texto);
+    min-height: 100vh;
+  }
+
+  /* TOPO */
+  .topo-banner {
+    width: 100%;
+    line-height: 0;
+    border-bottom: 3px solid #0A4663;
+  }
+  .banner-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* WRAPPER */
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* AVISO */
+  .aviso {
+    background: var(--dourado-claro);
+    border: 1px solid #e0c97a;
+    border-left: 5px solid var(--dourado);
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-bottom: 28px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: #5c4a00;
+  }
+  .aviso strong { display: block; margin-bottom: 4px; font-size: 0.92rem; }
+
+  /* ACESSO */
+  #bloco-acesso {
+    background: white;
+    border-radius: 10px;
+    padding: 32px;
+    box-shadow: 0 2px 12px rgba(26,58,92,0.08);
+    text-align: center;
+    max-width: 480px;
+    margin: 60px auto;
+  }
+  #bloco-acesso h2 { color: var(--azul); font-size: 1.15rem; margin-bottom: 8px; }
+  #bloco-acesso p { font-size: 0.86rem; color: #718096; margin-bottom: 24px; }
+  .input-cpf-wrap {
+    display: flex; gap: 10px;
+  }
+  .input-cpf-wrap input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid var(--cinza-borda);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    letter-spacing: 0.05em;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .input-cpf-wrap input:focus { border-color: var(--azul-medio); }
+  .btn-entrar {
+    padding: 12px 22px;
+    background: #0A4663;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+    white-space: nowrap;
+  }
+  .btn-entrar:hover { background: var(--azul-medio); }
+  #erro-cpf {
+    margin-top: 12px;
+    color: var(--vermelho);
+    font-size: 0.84rem;
+    display: none;
+  }
+
+  /* FORMULÁRIO */
+  #bloco-formulario { display: none; }
+
+  .card-nome {
+    background: #0A4663;
+    color: white;
+    border-radius: 10px;
+    padding: 20px 28px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .card-nome .avatar {
+    width: 48px; height: 48px;
+    background: var(--dourado);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .card-nome .info-col { flex: 1; }
+  .card-nome h2 { font-size: 1.1rem; font-weight: 700; }
+  .card-nome p { font-size: 0.82rem; opacity: 0.75; margin-top: 2px; }
+  .tag-cargo {
+    background: rgba(255,255,255,0.15);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+  .btn-sair {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.4);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-left: auto;
+    transition: background .2s;
+  }
+  .btn-sair:hover { background: rgba(255,255,255,0.12); }
+
+  /* SECTIONS */
+  .secao {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(26,58,92,0.07);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .secao-header {
+    background: var(--azul-claro);
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--cinza-borda);
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .secao-header:hover { background: #dce6f5; }
+  .secao-numero {
+    width: 26px; height: 26px;
+    background: #0A4663;
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .secao-header h3 { color: var(--azul); font-size: 0.95rem; font-weight: 700; flex: 1; }
+  .secao-seta {
+    color: var(--azul-medio);
+    font-size: 0.9rem;
+    transition: transform .3s;
+  }
+  .secao-corpo {
+    padding: 20px 24px;
+  }
+  .secao.fechado .secao-seta { transform: rotate(-90deg); }
+  .secao.fechado .secao-corpo { display: none; }
+
+  /* GRID DE CAMPOS */
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 640px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+
+  /* CAMPOS */
+  .campo { display: flex; flex-direction: column; gap: 5px; }
+  .campo label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #2d3748;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .campo label .req { color: var(--vermelho); margin-left: 2px; }
+  .campo label .tag-pre {
+    display: inline-block;
+    background: #e8f5e9;
+    color: #276749;
+    font-size: 0.65rem;
+    padding: 1px 6px;
+    border-radius: 10px;
+    margin-left: 6px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+  }
+  .campo label .tag-conf {
+    background: #fff3cd; color: #856404;
+  }
+
+  input[type=text], input[type=email], input[type=date],
+  input[type=tel], input[type=number], select, textarea {
+    padding: 9px 12px;
+    border: 1.5px solid var(--cinza-borda);
+    border-radius: 7px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: #1a202c;
+    background: white;
+    transition: border-color .2s, background .2s;
+    outline: none;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--azul-medio); }
+  input.pre-preenchido {
+    background: #f0f7ff;
+    border-color: #90cdf4;
+    color: #2b6cb0;
+  }
+  input.confirmar {
+    background: #fffbf0;
+    border-color: #f6c90e;
+  }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a5568' d='M1 1l5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+  .divider { height: 1px; background: var(--cinza-borda); margin: 18px 0; }
+  .subsecao-titulo {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--azul-medio);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--azul-claro);
+  }
+
+  /* CHECKBOX GRUPO */
+  .check-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  .check-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .check-item input[type=checkbox] {
+    width: 16px; height: 16px; border-radius: 3px;
+    accent-color: var(--azul);
+    cursor: pointer;
+  }
+  .check-item span { font-size: 0.88rem; color: #2d3748; }
+  input[type=checkbox] { width: auto; padding: 0; border: none; }
+
+  /* RADIO */
+  .radio-group { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 4px; }
+  .radio-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .radio-item input[type=radio] { accent-color: var(--azul); width: 16px; height: 16px; }
+  .radio-item span { font-size: 0.88rem; }
+
+  /* DEPENDENTES */
+  .dependente-card {
+    background: var(--fundo);
+    border: 1.5px solid var(--cinza-borda);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .dependente-card .dep-num {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--azul);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .btn-remover {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: #fff5f5;
+    border: 1px solid #fed7d7;
+    color: var(--vermelho);
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 0.78rem;
+    cursor: pointer;
+  }
+  .btn-remover:hover { background: #fed7d7; }
+  .btn-add {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--azul-claro);
+    border: 2px dashed var(--azul-medio);
+    color: var(--azul-medio);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px;
+    transition: background .2s;
+  }
+  .btn-add:hover { background: #dce6f5; }
+
+  /* LEGENDA */
+  .legenda {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    font-size: 0.78rem;
+    margin-bottom: 20px;
+    padding: 10px 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--cinza-borda);
+    align-items: center;
+  }
+  .legenda-item { display: flex; align-items: center; gap: 6px; }
+  .legenda-dot {
+    width: 12px; height: 12px; border-radius: 3px;
+  }
+  .dot-pre { background: #90cdf4; border: 1px solid #3182ce; }
+  .dot-conf { background: #f6c90e; }
+  .dot-vazio { background: white; border: 1.5px solid var(--cinza-borda); }
+
+  /* BOTÃO ENVIAR */
+  .rodape-form {
+    background: white;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(26,58,92,0.07);
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .rodape-form p { font-size: 0.82rem; color: #718096; }
+  .btn-enviar {
+    padding: 14px 40px;
+    background: var(--verde);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-enviar:hover { background: #22543d; }
+
+  /* SUCESSO */
+  #bloco-sucesso {
+    display: none;
+    background: white;
+    border-radius: 10px;
+    padding: 48px 32px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(26,58,92,0.08);
+    max-width: 520px;
+    margin: 60px auto;
+  }
+  .sucesso-icone { font-size: 3.5rem; margin-bottom: 16px; }
+  #bloco-sucesso h2 { color: var(--verde); font-size: 1.4rem; margin-bottom: 10px; }
+  #bloco-sucesso p { color: #718096; font-size: 0.92rem; line-height: 1.6; }
+
+  /* NOTA */
+  .nota { font-size: 0.78rem; color: #718096; margin-top: 5px; }
+
+  /* HORÁRIO FIXO */
+  .campo-fixo {
+    padding: 9px 12px;
+    background: #f7fafc;
+    border: 1.5px solid var(--cinza-borda);
+    border-radius: 7px;
+    font-size: 0.92rem;
+    color: #4a5568;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPO -->
+<header class="topo-banner">
+  <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAD6BOIDASIAAhEBAxEB/8QAHAABAAMAAwEBAAAAAAAAAAAAAAUGBwMECAIB/8QAVxAAAQMDAQMIBAgJCQYDCQEAAQACAwQFEQYHEiETFTFBVWGU0RRRcYEIIjJ1kaGxshY1NjdCUnN0syMzNFNWYnLB0hckgpKT8FSVoiUnQ0VjhMPT4cL/xAAaAQEBAQEBAQEAAAAAAAAAAAAAAQIDBAUG/8QALxEBAAICAQMBBgYDAQEBAAAAAAECERJRAyExQQQTM2GBsSJxwdHh8DKRoUJi8f/aAAwDAQACEQMRAD8A21ERaZEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERARdSW522KR0ctwpGPacOa6ZoIPeMrmpqmmqmF9NURTtBwTG8OAPq4IOVERAREQEREBERAREQEREBFDav1Jb9L2xlxuTZ3QvmEI5Fgcd4gnrI4fFKjtH68smqbhLQ2xlW2WKIyu5aMNG6CB1E8ckKC1IovU1+tmnbWbjdZzFCHBjd1u857j0AD18D9Cj9H62sOqZpoLZNKJ4m77opo9127nG8OkEZI6+tBZERFQREQEREBERAREQERRuob5arBQGtu1WymhzutyCS4+oAcSUEkiqun9oOlL3UejUtzbFOThsdQ0xl3sJ4H2ZyufUms7JYLpTWytkmfV1ONyOFm8Rk4GePDJUFjREVBERAREQEREBF0q27WqhfuVtzoqZ36s07WH6yvuiuFvrgTRV1LU46eRla/7Cg7SIiAiIgIiICIqDXbWdLUdbPRzR3EyQSOjfuwtIy04OPjdygvyLipJ2VVJDUx53JWNe3PTgjIXKqCIiAiIgIiICIiAiIgIiICIiAiIgIs9n2vaUhmfE+K5bzHFpxA3pB/xLQWODmBw6CMhQfqIioIiICIiAiIgIiICIiAiIgIuleLtbLPTNqbrX01FC54jbJPIGNLiCcZPXgH6F2opI5omSxPa+N4Dmuacgg9BBTE+TMZw+0REBFHUt8s9Vc5bXT3Sklros8pTslBkbjpy3pUikxMeUiYnwIiIoiIgIi4aypp6OlkqqueOCCJpdJJI4Na0eskoOZF1LVcrfdaT0u2VsFZTlxbykLw5uR0jIXbSYwRMT3gRFHXK+We2VUFJcLnSUtRP/Mxyyhrn8ccAenjwSImfCTMR3lIoiIoiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAupea+G12mruNQf5KmhdK7vAGce9dtZr8IG8+haVhtUb8S3CX4w/+mzBP17v1qDD5TW3m5VVUWumqJeVqZiPUAXvP0ZWi/B4vPo2oKuyyPwyti5SMH+sZxwPa0n/AJQuT4Ptjirqi73Cqj34BT+iAHoPKcX/AFAD/iVEp5KnSetGvOTNbK0hw6N8Ndgj2EZ+lZHqxdDUNyis9jrbpPjcpoXSY/WIHAe84HvXbppoqmmiqIXh8UrA9jh1tIyCsR24P1hJW1RqWTRaejkayHccAx5IBy4A5cc56ejC1IltkeutQ6j1U+gulRDJTilfIGsha07wLQOI9pWuLyXpy23i6XA01jimlqhGXFsT907oIzxyPWFqux/T2rrXqt9TfKWsipTSvaHSzBw3iW44ZPqKkSNfRYd8IWrqqfVVAyCpmiaaEEhkhaCd9/qVr+D5PPUaMq3zzSSuFxeAXuLjjk4+HFXI0ZFSttkssOzytkhkfG8SRYcxxB/nB1hZjsNrayfX8Ec1XPKwwS/FfISPk+opkeg0XUvEVZNaqqK31Ho1W6Jwgl3Qdx+OBweHSvOw03tB1PUPfUUtyqS1xa59XLuMBBwcb5A4H1JMj0m1zXDLXAjuK/V5cv2mtUaOfDV1kU1EJHYjngmGN7pxvNPArWNiWtK3UENRabtLy1ZSsEkcx+VJHnB3u8Ejj15+lkffwiPyHpvnCP8AhyKnfBz/ACwrvm938RiuPwiPyHpvnCP+HIqd8HP8sK75vd/EYp6jUNpelHausDKGKqbTTwzCaJ7hlpOCMHHVg9Kgtlmzqq0pdJ7ncK6Ced8JhjjgB3QCQSSSBx4DhhfvwgJ5qfRVM+CaSJxr2DeY4tONyT1Ko/B7q6uo1bXMnqZpWigcQHyFwB5RnrT1G5osm202PVN01DRzWKmrJYG0ga8wyboDt9x9Y44IWf1emde0lLLVVNJcooYml8j3VGA1o4kn4yuR6ZReR6esu9TUR08FXWyyyuDGMbK4lzicADivV1vhmjtNPBI4smbA1jncCQ4NAJ9R4pE5HaXy1zXZDXA46cFedbxYtot+vlZQ1LblcHQTOjc979yA4PS3JDACMHA9ajL9orVWmKVtzrKR0ELXAGaGYO3CejO6cj2qZHp9Fj2xLXNyr7n+Dt4qX1RfG51LNIcvBaMlpPSRjJyePD6NR1HdqWxWSqu1YTyNOzeIHS49AaO8kge9XIkF+AgkgEZHSvMOpNX6l1XceTfUVG5K/dhoqYkN49AwOLj3nJX5LojWdDEKw2OvYAM70Q3nj3NJIUyPUCzbaTom9at1ZQP5eKKzwRtY88p8cZcS8huMZIwPcFLbG4ru3RcNReauqqJp5HPjbUOLnRxjgBx49RPvCqe2in1pLqGnpbTPcZ7fVxZjgpQQGubwcHbvSOg5d6+5WR+6l2NUbmB2n7m6GbH8zWHea72OaMj6CvrZ7spq7Ze4Ltf6mmk9GcJIYISXZeOguJA6DxwO5Uh+zHW5p3VT7Vl2N4s9IYXn3b3T3dK4dEa4vWmbnE2SpqJ6AP3Z6WVxcA3PHdB+S4d3vUHplF8xPZLG2SNwcx4DmkdYPWsL2qbSLjVXSotFiqn0lFA4xyTRHD5nDgcOHENzwGOn6lZkbqSAQCRk9C/V5bpNIauulGLpDaK2oieN9srvlPHrAJyfcu9o7XeoNL3BsM89RU0bH7s9HO4ndwcHdzxa4fR6wpkelkXXttbT3G309fSSCSCojEkbvWCMrsLQLCtqm0mtq6+ez6fqnU1FC4xy1ETsPmcOnB6m+zp9i1TaPcpLRoe7V0Ti2VsG4xw6WueQwEewuyvOOi7U2+aqt1qfnk55wJMdO4OLvqBWZHb0/ovVGoYDWW+2ySwOJ/lpXtY1x68FxG97sr5vOk9VaccKmstlVTNYcieI7zW/8TCce9eoqeGKngjggjbHFG0NYxowGgcAAFyJgRGjKWvo9LW6nulTNU1ohBnfK7edvHiQSenGce5S6LDdp9v15XazqbZSS3OtopAJadkOWxNYep2MNyDkZPHh3qjcN5u9u7w3vVnivpeaLhs41lb6CS4T2z4kLS94jnY57QOJOAePuypPZVry62y+0lsuFZLVW2pkbCWzOLjCXHAc0niAD0joxlTI9CIuCvqoaGinrKl+5DBG6SR3qa0ZJ+gLzLrbWV41RcZHzVEsVHvYhpGOIY1vVkD5Tu8/YrM4HqAEEZByF5L1Vw1PdQf/ABs33yp612fX2mom3uioLlRxMG+4gcC3++z1e0KtXmtNyu1XcDE2J1VM+ZzGnIaXEkgd2SszI9Xaf/EFv/dYvuBd5dHT/wCILf8AusX3Asp2x0utp9UR0drnuVTb6qIOhhpgQ1pHBwdu4zxwcu/WC0NjLmh26XDePVniv1ebJtmWtmUr6p9qyWjeLBUMdIfcDxPd0r50Dru8acukMdRVz1FtLw2enlcXBrc8S3PySOnh09amR6VRdG+3KK1WOsurxykdNA6bdB+VgZAz3rzTc73qfWd6ZTyVM9TNUybsNLG/djbnqDc4HtPvKsyPUYIPQQV+rzXU7O9c2tnpUdsmJbxzSztc8e5pz9C1XZKdTfgTVVl1qaqpqXuf6HDVcXN3QQMk/G4uyME9Q9aZHZ2v6rqdLWCB9vextfVTbkZc0Ow1vFxwfcP+JfWx7UNz1Lpior7rKySdlY6JpYwNG6GMI4DvcVh+vzqp14a/VnLtqpGb8bJHDDWEkfFDTgDIK/NNaf1ZdaB9RYqarlpmyljjFMGDfwCeGRxwQpkepUVJ2NWy9WrS9RT32GeKpdWve0Syb53NxgHHJ4ZBWM6rvFxoNodzqIayoxT3SR7Gcqd34spIGPVwVyPTi/AQRkEEdy83651le9ZXaSmoBVtt4JEFJCCS4frPDek/UPrOi/B+ttZQWK5GtpJ6aSSqADZoywkBg44PtTI0xfhc0O3S4bx6s8Vjm2Ol1tPqiOjtc9yqbfVRB0MNMCGtI4ODt3GeODl36wVQm2Za2ZSvqn2rJaN4sFQx0h9wPE93SmR6TReatA67vGnLpDHUVc9RbS8Nnp5XFwa3PEtz8kjp4dPWvSgIcAQQQeIISJyPIVz/ABlVftn/AGleuqf+Yj/wj7F5Fuf4yqv2z/tK9dU/8xH/AIR9ikDkREWgREQEREBERAREQEREBERBmvwg6aOt03ZKOVzmxz3uCNxb0gOZIDjv4rg2V3qssN8qNnl/kzPTEm3TOOOWi4kN+jiPeOpd3br+KdO/P9N92Rdza1pKW/2uK5Wo8le7aeVpJGnDnYOdzP1jv9q9dLR7uKW8Tn6Pn3raOtbqU8xj6xwvCFVTZjq2LVdgbLIOSuNMeSrITwLXjrx6j5jqVrK8tqzWcS91LxesWr4l5yrrfdjr7V2o7FJILhZa1s4jaMiSMl2+COvgBw9WVuWidR0WqdPU92o3N+ON2WMHJikHS0/99GFSNlgB2o68B6OXj+89dG5RybLddi6QtcdMXh+7PGOink9f+Y7sjqXt6sR1J09YiMf68Pm9CZ6Me8/8zM5+Xfz+7YEXxDJHNEyWJ7XxvaHNcDkEHoK+14X1BERAWR7Q7hUa31O7RVqlcy20IM12qGceLeO4OrpGPb7FZNrGq5bJb4rRaAZb7czyVLGziWA8C/u7u/2Ln0RpSHSejJ6VxbJXTxOlrJukvkLTwz1gdA95616OnHu43nz6fu8nWmerb3UeI8/sifg6fm3j/e5f8lo6zj4On5t4/wB7l/yWjOIaCSQAOJJWfaPi2/Nv2T4FPyR2pbzRafstTdrg/dggbkgdLj1NHeTwXny+Ut1uVzsWtb05zJ7rdo201P1RwNLd37f8+tXisfJtR116FE5ztK2eTMzmkhtVL6gesf5ZPWF2NurGRVOj442hjGXNjWtAwAAW4AXo6Ee7tFfWfPyeP2mZ61Zv/wCY8fOc+WqhECLwvqCIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiIC837a7zztrqpijfvQUDRTM9o4v8A/USPcFv2p7pHZdPV11kximhc9oP6Tv0R7zge9eWrRRVN+1BTUTZCaitqA0yEZwXHi4+ziVmRqGzDXelNMaSht9VJVelukfLPuQZG8TgYOf1Q0Kj7T7paL3qya62Z0phqI2GQSR7pEgG6eHsAPvKvP+xCX+0rPBH/AFqD1xsuqNNaelvDLs2tbC9okjFPuYa44znePWR9Kdxo+w6886aHhppH5nt7zTuz07vSw+zBx/wri2+/m/f+9Rf5rPtgV59A1e+2yPxDcYiwDPDlG5c36t4e9aHt6Y5+z6ZzRkMqYnO7hnH2kJ6DO/g+fl3J+4yfeYvQS84bErpQWrW7ZbhUx00U1M+ISSO3WhxLSMk8B0LfaW/WSrrm0NJdqKoqXAuEUMzXuwOk4B4JAxn4Rn5WW/8AcB/Eerd8HX8iaz5yf/DiVV+EdC9uo7ZUEHcfRlgPe15J+8FIbAdSWqhtVdZ7hWwUkpqPSIjM8Ma8FrWkAnhkbo4d6eotm3I/+7iu75Yv4gWW7B/zhwfu8v3VatuurrVV2WKxWythrJZJhJO6F4exjW5wMjhknHswqrsH/OHB+7y/dSfI3nUV6t1gtclyuk4hgYcDhlznHoa0dZWWXPbb/KubbLFmMHg+om4n/haOH0lPhJyTA2SHJEB5Z2OouG4PqB+tR3wfoLFJcbhLcfRXV0YZ6K2fHBvxt4tB6/k8eke9M9xDa22h3bVNk5uq7ZSwQcq2QSRh2cjOOJOOtd74PRI11Pg9NBJn/nYrRt91Fa32CGx01VFPVvnbJI2NwdybWg9OOgkkcPaqt8Hr8upv3CT77FPUXn4RH5D03zhH/DkVO+Dn+WFd83u/iMVx+ER+Q9N84R/w5FTvg5/lhXfN7v4jFfUXH4RH5D03zhH/AA5FTvg5/lhXfN7v4jFcfhEfkPTfOEf8ORU74Of5YV3ze7+IxPUbysP25609MqXaYtkv+7wu/wB8e0/zjx+h7G9ff7FdNsGsxpqz+hUMgF1rGkR4PGFnQX+3qHfx6ljuzez2u8agbJfblR0lBTkSTekVDYzMc8GDJBOes+r2hJGg7CtF8hE3VNzh/lJB/uMbh8lp6ZPaegd2T1hapdK+ktlvmr6+dkFNC3ekkd0Af99Sj2an0sxjWM1DZmtaMACtiAA9XSqV8IKpdJoegfSytkpZ6xji+N2WvbuOLeI4EHp9wV8DoXnbXTxzOjtFlfMwHhLUS7mf+EA/aqzqbajeL/Yau2S2mjjp6hu697Q8luCD05x1LrbEYLJPrEi8+ju3KdzqZs+Nx0mR6+BOM4HktL2y6htNFoyrtbKqB9ZVtbHHBG4EtG8CXEDoGAfeoMn2OkjaTaMH9OT+E9aZ8ImpfHpGjpmnAmrQXd4axxx9JH0LM9j35yLP/jk/hvWrbfrdJWaHbVRNLjRVLJX4/UILT9bgnoKN8HmihqNX1VXK0OdS0hMef0XOcBn6Mj3rfF5s2PakpdN6r5W4P5OjqoTBI/GeTOQQ492Rj3rd6jV2loKfl5NQ2zcxn4tS1xPsAOSkCcWd6w2sWayVstBQ00lzqYnFsha8Mia4dI3sHJHcMd6sVPqKlvukrndLI6VzYo5mRPc3dLntZkEDpxkjp4rzHbW0z7lTNrXltM6ZgmcOkM3hvH6MqzI05+2m9SPIp7JRDuLnuP1YWZXWqkrrpV1ssbYpKid8rmNGA0ucSQO7ivUTbhpmw2QTw1Vuo7fGzLeSc0NcMdWPlE92SV5gvtY243uvuDWljampkmDT0gOcTj61JHpplTJSbOm1jHESQ2jlWnvEOf8AJeaNOUrK7UNtopeMdRVxRP8AY54B+1enrTSsrdE0lFIcMqLayJx7nRgf5rzDu1dh1ABNHuVVBUguaf12Oz9oSR62Y1rGhrWhrQMAAYAC87bd6OKk2gTPiaG+k08czwP1uLSf/StptmtdL19sZXtvdDCxzN50c07WPYesFpOc/b1LAdqN+g1FrKqr6Ql1KxrYYXEY3mtHT7ySfYkjYdg1TJUbPoo3kkU9TJEzPqyHfa4q/Kn7HbXLatA0Ec7Syao3qhzT1b5+L/6d1XBWBS9tjHP2bXPd/RMLj7OVasb2NyMi2lWhzyAC6Ro9pieB9ZXofU1sZedP11reQ30mB0Ycf0XEcD7jgryxE+vsN9Y/dMFdQVAO64fJex3QfeFJHrhFTdNbSNL3ehjlnuMFuqd0crBUv3N09eHHgR/3wXNdNoujrewl96hqHDoZTAyk+8cPpKuRa3uaxpe9wa1oySTgALL9S7Y7VQ1L6ez0ElyLCWmZ0nJxk/3eBJH0Kx7Qa91VstuFxoeUa2poWyNyMODH7uc4/ukrANDRWybV1sivLo20LpxyvKHDe4OPqJwD3KTIvUu2W+TtcyKyUJa4YIO+77Cs0thIuVKQcETM+0L09qC/2LTdglqDUUkTGRnkIInNBkdjg1rR/wBheYLb+Mab9sz7Qkj0htknfT7N7s5hw57Y4/c6RoP1ErFNkFFDX7Q7XFO0PjY902D1ljC5v1gLddqFvkuegbvSRNLpOR5VoHSSxwfgf8q89aBvUen9X2+6zAmGGQiXAydxzS1xx14Bz7knyPVR4jBXk/WVJFQatu1HA0NihrJWxtHU3eOB9C9JVGsdLQW417r9QOhDd4Bk7XPd3BoOc92MrzJf683S+V1yLS30qokm3T+jvOJx9aSPVen/AMQW/wDdYvuBUXVu1uz2iskordSyXSeIlr3tkDIgesB2CT7hjvVnrJJodm801MSJmWdzoyOkOEOR9a8zWNlHJe6GO4u3KJ1TGKh2cYjLhvH6MpMjSXbab3I4inslF7C57j9RCzCvndVV1RUvY1j5ZXPc1owGknOAvUs1001p+y+kNqaCkoY2ZY2FzQHDHANA+UT3Ly5c6n0y5VVZu7vLzPkx6t4k4+tSR6lqLe28aMNtkfuiroRFv9O6XMwD7jxXmm72u96TvbY6qKaiq4H70MzcgOweDmO6wvTTK+mtelorhWOLKenpGPkcG5IAaMnAXVju+ktTUJg9OtlwgeOMMjmk+9ruIPuWsDLtLbZK+nLINQ0bayPoNRAAyQd5b8l3u3VsViu1vvdtiuNsqGz08nQ4cCD1gjqI9SwfbHpjT2n6qmmslW0GoLuUo+V3+TAxhw6wO4+5WT4NktQWXuElxp2mFwHUHnfBx7QB9AUiRE/CM/Ky3/uA/iPVu+Dr+RFX84v/AIcaqfwjWOGqLdIR8V1Fug94e7P2hTWwG/Wei01W2+tuNLS1ArHTBs0oZvMLGDIz08WlPUa4vKevvy4vvzhP/EK9QWu6226Mlfba6nrGRP3HuheHtDsZxkcF5f19+XF9+cJ/4hSR6C2WWSis+jLc6nhYJ6unZUTyY+M9z272CfUM4CtSidG/kfZfm+D+G1ferJJodK3aamJEzKGZ0ZHSHBhI+tUUrVu1uz2iskordSyXSeIlr3tkDIgesB2CT7hjvVWdtpvcjiKeyUXsLnuP1ELNrGyjkvdDHcXblE6pjFQ7OMRlw3j9GV6fmummtP2X0htTQUlDGzLGwuaA4Y4BoHyie5TyPLVfO6qrqipexrHyyue5rRgNJOcBetrOSbTRknJMDPuheS7nU+mXKqrN3d5eZ8mPVvEnH1r1nZvxPRfu8f3QkDyZc/xlVftn/aV66p/5iP8Awj7F5Fuf4yqv2z/tK9dU/wDMR/4R9iQORERaBERAREQEREBERAREQEREGd7dfxTp35/pvuyLRFne3X8U6d+f6b7si0Rdb/Dr9Xn6fxr/AEZNr6gqtC6sj13ZIXGgqHCO7UzPkkH9PHVn7fatPtdfS3O3QXCimbNTzxh8b2ngQV919LT11FNR1UTZYJmFkjHDg4HpWV6Nqp9nms36Mucrn2eveZLZUPPBjj+gfs9uPWt/Fp/9R/2P4Y+B1P8A5t/yf5+7tbK/zo68/eI/vPWgajs9Ff7LU2q4RiSCdhafW09Th3g8VE6f0u2z6zvd6p3gwXVkbnMJ4tlaXb3uOQfpVnWOrfN9q/L7N9DpTXpzW0es/dl2y28Vunr1Ps91FKeWgJdbZ3HhNH0hoPs4j3jqWoqk7WNJP1Bao7hbCYb1bjy1JKw4LscSz344d/tK7ezHVjNV6fE0wEVxpjyVZD0Frx146gfMdS11Ii8e8j6/35s9GZ6Vvc2+n5cfRa1GanvVFp6x1N2r5A2GBmcZ4vd1NHeSpJzg1pc4gADJJ6lkdQX7UddejsLvwXssmXuzwqpfV7P8vasdKkWnM+I8unX6s0iIr/lPj+/JIbK7JW3m6T7QNRRn0ysyKCF3RBD1EDvHAd2T1rRbn+Lar9i/7CuZjWsY1jGhrWjAAHABcdbG6WiniYAXPjc1uT1kJfqb2yvS6UdOmsf/ALLPvg6fm3j/AHuX/Jfm1nUFZUVVPobTx3rpcsCd4P8AMRHpJ9WR9XtC5zLb9lOzWOBz+Xqmg8mwHjPO7px3D7B6197JNL1dvp6jUl9zJfLqeVlc/iYmE5DO7qyPYOpd5mu1urPjPb5vLWLaV6Eecd/lH7ys2jtP0WmNP01oohlsTcvkI4yPPS4+1UTb1/TdI/OrftatTWWbev6bpH51b9rVj2eZt1Ymfm6e1VivQmI8dvvDUwiBF53rQlp1PbLlqG5WGJz2V1vcBIx4xvgj5TfWBniptZlFaautu2pblaXNZd7ddzLSl3ASDkY96J391w4e3BV701eKe+WeG4U4Ld74skbvlRPHBzHeogrr1KRHeHDo9SbdrfP7pJQun9S22+3C50due6Tm6VsUsmPiOcc/JPXjBCj9Z3Cqq6uHStne5tdWtLqmdp/olP0Of/iPQ3vXT0BQU1s1TqS30UfJ09OKOONvqAjd0+s96RSNJmfP8lurPvIrHj1/07ty1kylvtXaKaxXe4z0gYZnUsTXNbvjLelw7/oXH+GNX/Y3Unhm/wCpcOmnNbtM1bvOA/k6PpP9xyuHKxf1jPpCW1r2xx9kpveJnb1n7oWxagnudb6NJp68W9u4XcrVQtazhjhkE8eK/XaotbNYHS8rnx1xgE0ZcAGvBz8UH18M4U01zXfJcDj1FZ1erFFqDaDfaN0z6eojt9JLTVDPlQytc/dcP++hKRW0znt2Opa9IjHectHUfqK7U9js1RdKpkj4YGhzmxgFx4gcM+1RWh9QS3OGe2XRgp71b3cnVxdAd6pG+trhxXFta/N9dv2Q+81SKYvFZbt1M9Ob14TWorrBY7JV3apZI+GljL3tjALiO7KgWazqntDm6O1GWkZB9Hbx/wDUuXaz+bm9/up+0KxW/wDoFP8Asm/YEiKxTMxlLTa3UmsTjtH6q5S65tfpLKe6Udyssjzhhr6Yxscf8Yy36SFaWkOaHNIIIyCOtcVZS01ZTPpquCOeGQbr2PblpHsVU0Y51k1DX6Pkmkkp4om1duMjt5zYXHDo8np3XYx3HuTFbRMwsWtSYi3eJdq7avZRX2ez09kutxqKeJkkhpYmuDQ/OOkj1FcP4Y1f9jdSeGb/AKlx2ZzW7VdRFzgB6DSdJ/xq3crF/WM+kK21riMcMU3vmdvWfug7JqKouVeKWTTl5oWlpPLVMLWsGOrIceK7eo79brDSsmr5Hl0rtyGGJhfLK71NaOJKkmuY75LgfYVSL5PBa9qVFc7wRHQy2809JUSfzcU2/lwJ6GlzccevoUrEWt4ava1K+fq7X4YXQN5Z+ib8Kfp3w2Mvx/g3sqd0/fLdfKV1Rb5i/cduSxvaWSRO/Vc08QV343xysD43te08Q5pyCkcMUcj5GRMa+Q5e4NALj0cfWpM1mPGGq1tE95zD7XRvl1obLbZbhcZhFBH0nBJcT0NAHEknoAXeVQ2lltO2x3OoaXUNDc45KrhkNaQWh57muIKlK7WiF6tprSZh+O1xJTxtq7jpi9UVud01UkbXBg/We0EuaPaFbYJYp4WTQyNkjkaHMc05DgeghfjmxTwFrg2SKRuCOkOBXzR01PR0kVJSxMhgiaGRsaMBoHQAlprPiMFYtE95y5lB2zU9sr9TXDT0bnsrqHdL2vAAeCAct9eMjPtU4sy5nqblqPVNZbJRBdrfcIZqOTqceRG9G7+64cCtdOtbZyx1r2prrz+jTUUVpa9QX60R1sTTHICY54XfKhlHBzD3gqM1pc6mSeDTFnmLLnXtO/K0Z9Fg6HSn1Hqb3nuWYpM21bnqViu0O5YtT229Xq52uhL3yW1zWzSYG4S7PBp68YIXVu+rm0N8ntFPY7tcZ4I2SSGlia5rQ7OOkj1KH0FbaW0a/wBR22iZuQU9JRMaD0n4jsk95PE+1SFnc1u02/7zgP8Ac6XpP+NdZrWLTjxiP0cIveaxmcTmY+79/DGr/sbqTwzf9S79j1DUXKuFNJp280Dd0u5Wqha1nDqyCeKm+Vi/rGfSF+tcx3yXNOPUVzm1ceHaK2z3shajVFrp9XRaZne6KtmpxPEXABj+JG6D+twPBTizvUdjp9QbQ7jQTudFILPBJTzsOHwytmeWvB7j9WVPaHvtVXNqLPeYxBe7edyoZ1St/Rlb62u+orVunGsTH1Yp1Z2mtue37JbUV1gsdkq7tVMkfDSx8o9rBlxHdlLrdYLdYKi8zMkdBBTmdzWgbxaBnA71DbWvzcXz91P2hNbfmvunzW/7ilaRMR85/Zb3mJtEekZ+7ii1pUyxtkj0fqNzHgOaRTt4g/8AEvun11bG1DYLtQ3SyuecNdX0xZGT/jGWj3kKfsn4mov3eP7oXPVU8FVTvp6mGOaJ4w9j2gtcO8FJmmcYIr1MZi3/AB9sc17A9jg5pGQQcgquXvVrLdfXWeGy3S41DIGzv9Eia4Na4kDOSOtpXR0kX2DVVXpAlzqF0ArbaXEksYXYfFk9TTgjuK5aVzW7WblvOA/9j0/Sf/qyKxSImc9+yT1JtEY7TnD9/DGr/sbqTwzf9S7tm1HUXGvbSyabvVC1wJ5apha1gx6yHFTvKxf1jPpC/WvY4/Fc0+wrM2rjw3FbZ/yR2ob7brDRtqbhK5u+7cijjYXySu/Va0cSVB/hhdN3lvwIv3o/Tv7se/j/AAb2Vw6mnp7ZtFtN0u7mx280b6eCZ4+JDOXZOT+iXNwAe5XKKSOWNskT2SMcMhzTkFaxFYiZjOWIm17TETjCP09fbdfaZ81BI/ejduzRSsLJInepzTxBUmvhkUbJHyNjY178bzgMF2OjJ619rnOM9naucdxERRRERAREQEREFS2pafvGptPstVpnpIQ6YPnNQ9zQ5regDdaevB9wVW2abMrpp3VEd3utTQTMhifyTYHvcd8jGTvNHDBd9S1ZFMAuhqK3Mu9irrZJgNqYHRgn9EkcD7jg+5d9FRhds2R6vt1ypq+nuNmE1PK2Vh5aXpacj/4fctlvtrpr1Zam11zSYamPcfuni09II7wcEexd9FMDAbnsc1LBUubQ1FFVwZ+I8yFjsd4I4H2Eq0bLNnN507qJl4udTRhrYnsEUTi5xLhjicAD61qyJgVzX+k6PV1nFHUSGCeJ2/TzgZLHdeR1g9Y9ix+p2PasjnLIn2+dmeD2zEDHsIyvQaJgZFp3Y6yC3Vj7xVwz10tO+OnZHnkoXkcHkkZcQe76Vz7NNm980zqqK619XbpIGRPYWwyPLskYHSwD61qyJgV3X+lKTVtl9BnkME8buUp5gM7jsY4jrB6x7PUsdm2P6tZOY43W+VmeEgnIH0EZXoREwMn07sep6e01vO9VFU3CeB0cHJ55KBxHB2Txcc46h1rsbLNnl60rqSS5XCqt8sLqZ0QbBI8uyXNPW0DHA9a1BEwKltV0zX6r05DbbdNTRSsqmzEzuc1u6GuHUDx+MFAbKNAXnSd+qa+41NBLFLSmFogke52S5p45aOHxStMRMCpbVdM1+q9OQ223TU0UrKpsxM7nNbuhrh1A8fjBQGyjQF50nfqmvuNTQSxS0phaIJHudkuaeOWjh8UrTETAyjaVs3vuptVS3Whq7dHA+JjA2aR4dkDB4BhH1qtf7F9U/wDj7N/1pP8A9a3xEwMD/wBi+qf/AB9m/wCtJ/8ArWsVOlYLloGl0zdHNLoqSGIyxcdyRjQN5ue8e8KyImB5/r9juqYahzKWagqos/FkEpYcd4I4fWrLorZBHSzmq1NPDUndIZTQElgJHS5xAzj1AdPWVraJgZDofZdfLBrKju09bbpaSme84Y9/KEFrmjgWYzxHWtaqoIaqmlpqiNssMrCyRjhkOaRggrkRBgO1DZvDpuimvNBcY/QuUDW082eUBceDWnodjieOOAPSq5ovRd01WJDbqmgjEbsPbNPh4Hr3QCccenC2babqTSVBURWXVFrnrWSxcvGWRNcG5JbwO8C08DxCyHZg2ok2k242kTMj9JLiM8RDx3g7/h4e1SfI3fZ9pr8FtNstT6oVTzI6R7wzdGXY4Aergs21fserjcZanTlRTOpZHFwp5nFro89QOCCPbg+3pW1orgYRYtjV7nq2G8VlLSUwPxxE4vkI9Q4YHtz7ipTWOyCpqruJtNy0FLRcixpinkeCHgYJGGnOQAc+slbGiYHUs1M+jtFFRylpkgp2RuLTwJa0A47uCqG0XZzQapl9PpphQ3INwZN3LJQOjeHr6sj6+CvSIPPcux/VzJixpt8jf12zkD6xn6lbNFbIIqGsjrtRVUNW6MhzaWEHkyereJwSO7A9/QtYRMAiIqCpO0HZ3a9VP9NZIaG5BuOXa3LZAOgPb1+3p9quyKDz7V7HtWRSlsL7fUM6nNmI+ogLsW3YzqGaQenV1BSR9Za50jvowB9a3pEwI+ltVPHp2KyVH+8U7KRtK/eGOUaGbp9mQsZv+xu9Q1jzZqqmqqUn4glfuSNHqPDB9oPuC3ZEwMT0tsbrnVsc2oquCOlacugp3Fz5O4nADR7Mn2dK5r1shub9UTVtoqLbDbjOJYopHva5g4EtwGEYBzjj0YWzImAWO622QT1FxlrdNz08cUri51LMS0MJ6dwgHh3HGFsSJgYXp3Y3d5q1jr5VU9NSNOXthfvyPHqHDA9vH2Lt6p2PXGpvtRPYai209vkIMcU0jw5nAZHBp4ZzjitpRMDq26mMFppqOcMeY4GxPxxacNAPT1LG9VbHLi24ST6eqaeSke4ubDM8tfHnqBwQR38D9q25EwML0/savE1Wx17rKalpQcvbC4vkcPUOGB7ePsUhrDY/WVd7fPp2a3UtC6NgEM0jwWuAwehpyDjOc9JK2REwIe72d9x0hNY3TthfNScgZA3eDTu4zjhlYvW7HNUwyEU89vqWdREpafeCP816ARMDAbdsb1NPKBWVVBSRZ+M7fL3e4AYP0hbFovTNBpWzC3UO88l2/NM/5Uj/AFn1D1DqU4iYFT2laMg1ha4oxMKatpiXQSkZHHpa7uOB7MLJn7INXtl3Bze5uflic4+sZ+pehUTAp2ynSlZpKyVFJXVEE008/KnkclrfigYyQM9HqVF1Psl1Hc9R3K5U9bamxVVVJMwPlkDg1ziRnDDx4ra0TA6On6SS32G30EzmOlpqWOF5YctJa0A4z1cF3Xta9hY9oc1wwQRkEL9RUYjqrY5cW3CSfT1TTyUj3FzYZnlr489QOCCO/gftXDp/Y1eJqtjr3WU1LSg5e2FxfI4eocMD28fYt0RTAxvWGx+sq72+fTs1upaF0bAIZpHgtcBg9DTkHGc56SVrtvhdT0FPA8gujiawkdGQAFzomBhFZsb1PNVzTNrrOGvkc4ZmkzgnP9Wt1iaWxMaekNAX0iYBERUEREBERAREQEREBERAREQZ3t1/FOnfn+m+7ItEWd7dfxTp35/pvuyLRF1v8Ov1efp/Gv8AQVa2i6Vp9WadkoX7rKqP+UpZuuOQdHH1HoP/APFZUXOtprOYdr0i9ZrbxKibJdVVF1o57BfN6K/Ws8lUMk+VI0cA/v7/AKetXtZrtYsVbbq2DXunGEXGgGauMDInhHTkdw6e72K66UvtFqOxU13oHgxTN4tzkscOlp7wV16tYmN6+J/5Lh0LzWZ6V/Mf9j++UqqLUaOraLaZTansU7Kemq2ubdIj0P4ZBA6yT9BGetXpVzaHqmm0lpya4y7r6h38nTQk/wA5IRwHs6ys9ObZxX17OnWimu1/TurO1i/11bWU+hNNv3rpcOFU9hxyEJ6cnqyM+72hXPSNhotNWCmtNCwCOJvx344yPPS495VV2YaedY7fPqbUs7W3m5uD55Z3BvJBxG7Hx6CSR78DqWgLXVtERpXxH/Zc+hWbTPVv5n/kf3yLiq6iCkpZaqplZFDEwvke44DWgZJK5Vle0K4VWs9URaAsspZTRuEl2qWnIa0EfE/768eorHTpvOPR063V93XPmfT83Dpann2jazdqq5RvFhtshjtkDh8WV4PyyOvjxPfgdS1pdW02+ltdtp7dQxCKnp2BkbR1ALtK9W+89vEeDo9L3de/eZ8iyzb1/TdI/OrftatTWWbev6bpH51b9rVv2b4kf30c/bPgz9Pu1MIgRcHpVPQ34+1b86j+DGupqNlVpK8y6htdFNVUdf8AErqWLiRPjEcrR3nDXe3KkNG01TBetTyT08sTJrnvxOewgPbyTBkesZB4qzrra+tvk89entTicz90BouzT22kmrblLy93r3Cask6gccI2/wB1o4D6V0tK/l3qz/HS/wANytirGmqapi1pqeolp5WQzOpuSe5hDX4jdnB68JFsxaZ4/WGppFZpEc/pKAp9O2W/7TNUc70LKrkY6Tk95zhu5Y7PQR6gpv8A2daM7Dh/6j/9Sio7hNYtoWoqqos94qIKtlMIZKWhfK126x29xAx1hS34bU/9n9S/+VS+S6WnqdtZnGI+zjSOj33iM5n0+aV0/p6zWBszbRQspROQZN1zjvYzjpJ9ZULavzs3v5spvvPUhaNTw3KvZSMs98py/P8AKVNvkjjGBni4jAXVttLUs2n3irdTytp5LdTsZKWEMc4OfkA9BI9SxGY2284/WHSdZ108Z/SX5rezVsksGo7CQ280DTus/Rqoul0LvbxI9RUXrO90d/2T3G40TjuuiDZI3DDonh7d5jh1EFX5ZjtQ07dKWnuFdp2kkqYLo0MuFFEMnfyN2ZgHXww719KvSmLTET6M+0VmtbWr4mO/7/usu1n83N7/AHU/aFYrf/QKf9k37AoLadT1FXoG8U1LBLPPJTkMjjYXOccjgAOJXVpdZQRUsUbtP6lyxgaf/ZUvUPYsxWbdOMcz+jU2ivVmZ4j7ytypoaazbDy0IzHbrRyU7h1PkkBa36Gkrln1HfLhEYbDpqvjmfwFRco+Qij7y0/Gd7AFKaTsYslDIJql1ZXVUnLVlS4YMsh7uoDoA6gkRpEzPlZn3kxEeI7qpLp+z37anfGXehZVCGhpTHvOcN3O/noI9QUz/s60Z2HD/wBR/wDqUbPXy2TaRea2e0Xepp6mjpmRSUtE+VpLd/Iy0Y6wpP8ADan/ALP6l/8AKpfJdLT1O2s9sR9nKkdHvvEZzPp80np/TdksDpnWigZSmYASFrnHexnHST6ypCupKWupX0tbTxVEEgw+OVgc1w7wVC2vVUNfXxUjbNfYDISOUqLdJHG3hni4jAXHdKzUdou81S2idd7RKARHTtAqKYgYOB+m09PrC5TW027+XeLUiv4Y7fJ1ToK30khlsFxudkeTndpqgmLPfG7LSuXT91vFJqJ2m9QPgqJnwmejrIWbgnY0gODm/ouGR0cCF8fh7bHfEjtl9fUf1Atsu/n1dCWGjut11UdS3aiNvhgpzT0NI9wdIA4gukfjgCcAAdS3O2J95/LlGmY91/zx+y2qk1kM+s79crXPUSwWC3vFPNFC4tdVykBzmucOIYARwHTlXZUqYXPSmpLlXw26puVmuTxPI2lZvzU8waGuO50uaQB0dGFjp+uPPo6db0z49X1ZKmfSd0i07dJzJbJzu2qrkPFp/qHn1j9E9Y71Y4LtTzX6ps7GS8vTQMmkdgbmHkgDOc5+KepVW96jt2o7XNaqTT13ub5hgMfSuhbG7qcZHgBpB456Vy7OKG7WusuNJfopp7lMI5nVwy6KVgaGtYDgYc3BGOvp61u1MxNref73c6dTForXvH97Lqqjor8r9X/vsP8ABCtyq2kaWph1Tqqaanljjmq4nRPewgSARAEtJ6Rn1LnT/G399YdepH46fn+kunqeOs0veJNTWmhkq6WqAjuNJCPjOfjEcrR684ae456lKaLs9TRQz3S7Fkl4uJElU5vRGP0Ym/3Wjh7clWFEnqTNcEdKItspunPzp6r/AHei+45dCXT1mv20y9C7ULKoRUdMWbznDdzvZ6CFK2Ckqo9pOpquSmmZTzQUgilcwhjy1rs4PQcLoVFxlsm0K71c9ou9TBU0tO2OSlonytJbvZGWjHWF1iZzOvnEfo4TEaxtHbaf1SH+zrRnYcP/AFH/AOpSmn9NWSwvmfaKBlK6YASFrnHeA6Okn1qM/Dan/s/qX/yqXyXatOqIbjXx0jLPfKcvz/KVFvkjjGBni4jAWLe9mO+XWvuIn8MRl0ab87lb8yw/xXrl1xYqmqdBfrIRHe7eC6E5wJ2fpRP9YPV6iv2npakbUausNPKKZ1pijEu4dwuEryW56M4PQrQlra2iY4K0i1ZieZUDWF9pdQ7ILzcKYOjd6M5k0L+D4ZARvMcPWCpbW35r7p81v+4q5tW05c4aK53PTkElQ25QGG40UTSTIf0ZWgfpDoPrCtGsKeon2cXKlhgllqH21zGxMYS9ztzoAHEnuXT8MRXHP7OX4pm8Wjvj/flMWP8AE1F+7x/dC7iptt1hDT26mgk0/qXfjiYx2LVL0gAepc0+pb1XROisWmLgJ3DDZrjH6PFH3kH4zvYAuU9O2XaOtTHlxVEgrNrdLFCN7m+1yOncOhpkeA1p78NJXQuVgtF+2q10V2omVTIrTA5gc5wwTJJ6iFZdJWI2Wlmkqag1lyrH8rWVJbjlH44ADqaOgBQFzrpbNtJq6+W03aqpprZDEySko3zN3hI8kEtHqIXStu8xX0hytX8MTePM5d//AGdaM7Dh/wCo/wD1KTsGmLFYZpZrTb2Ur5Whry1zjkA56yVG/htT/wBn9S/+VS+S7Ns1XBXV0VI2zX6AyHAknt0kbG+1xGAsT72Y75br7iJ/DEZTlXTU9XTvp6qCOeF4w+ORoc1w7wVVXaBttLK6aw19yskhOcUlQeTz3xuy0+xdu71WorVd5KyGkdd7TKxuYIQGz07h0loPywfV0+pdb8PbXnkxbL6aj+oFsl38+roSsXiPwre3Smfx+f74fViud5odSjTd/khq3TQOnoq2Jm5yrWkBzXt6nDIPDgVa1UbJS3W8asZqS50T7dTUtO+CipZCDKS8gukfjg3g0ABW5Z6mMtdHOJ49PyERFh1EREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERBE3vTlivcrJbra6arkY3da97fjAdOMjjhctmsdnszHNtdtpaPe+UYowHO9p6SpFFAREVBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREGd7dfxTp35/pvuyLRFne3X8U6d+f6b7si0Rdb/Dr9Xn6fxr/QREK5PQoWzu+VdfqzV1iqsSQUNZvwucckNeXZb7OGfeVAEP2X663xvfgtepOIA4Us3l/l7F29lf50defvEf3nq+6pslDqKx1Npr4w+KZuAccWO6nDvBXqtaKdTE+JiM/wCng6dLdXpRaJ/FEzj/AHPZ3aqrpqaikrZ5mMp42GR0hPANAzlZdpGmn2h6zdrG4xubZLe8x2unePluB4vI9vH24HUoCng1ld5odltaJY6eil3quuB/nKQfIGfUer3A9BW22qgpbZboLfQwthp4GBkbG9AAUtEdGO095+38tVtPtNomYxWPv/CJ2gabj1TpmotbpnwynEkEjT8mRvFufWFCbJdUVNzpJ9P3sGK+Wo8lO1x4ytHAP8/p61e1nO1SxVtFXU2u9PMxcbdg1UTOHpEPWD6yB9XsCx05i0e7n6fn/Lp1qzS3va/X5x/CT2qarfp60Mo7aDNergeRooWcXAnhv47s/T7197PNMN0hpiV0+J7nM0z1sxOS9+Cd3PWB5lQOzO1VmpL5LtC1BCWSTZZbKZ3EQxdAd7T1H2nrC0a5/i2q/Yv+wq3mKR7uPr/fknSiepb30/T8ufqp+xW7Vd80jNdq5+9PU10z3ceDejAHcBwV4WcfB0/NvH+9y/5LR1nrxEdS0Q37LMz0azPAss29f03SPzq37WrU1lm3r+m6R+dW/a1a9m+JH99GfbPgz9Pu1MIgRcHpEVe1lW17RSWmz1Lae41z3bkpYHclGwZc4g+5v/Eu/pq5c7WSmrnMEcr27s0f6kjTh7fcQVqazrsxF4m2qSRQOuqqspLCH0FU6lnkqoIRK1rXFofI1pwHAjoK6VW+9adno6iqvD7rQz1MdPM2eBjJIy87rXNLAMgEjIIVimYzlLdTWcYW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o6m0fpWmmEsOn7a14OQTTtOD3ZU6ig/AABgDACjrvYrLd3NddLXSVbmDDXSxBzgPUD04Ukio6Nqs9qtLHNtlupKMO+VyMTWF3tI6Vy3G30Fyg5C4UVPVxdO5NGHjPrwV2UQQVPo7StPKJYtPW0PByCadpx7MhTT4YpIHQPiY6Fzdx0ZaC0txjBHqx1L7RQR9uslmts7p7daKCjlc3cL4KZkbi3IOMgDhkDh3LkuVrtlzaxtyt1JWtjJLBUQtkDSenG8DhdxEHBQ0lLQ0zKWipoaWBmd2KGMMY3JycAcBxJK6klgsUld6c+y219XviTl3UrDJvDiHb2M571JIqOKqp4KqnfT1UEc8Lxh8cjQ5rh3g8Coy36X05b6kVNFZKCCdpy2RsDd5p7j1e5TCKDpPtFqfchcn2yidXDBFSYGmUYGB8bGejh0r8ulotV1aG3K20lYGjDeWha8j2Ejgu8iohKPSWmKOYTU1gtzJGnLXcg0kHuz0KbREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBFH892Xte3+JZ5pz3Ze17f4lnmrrPCbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5pz3Ze17f4lnmms8G1eUgij+e7L2vb/Es8057sva9v8AEs801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5pz3Ze17f4lnmms8G1eUgij+e7L2vb/Es8057sva9v8AEs801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5pz3Ze17f4lnmms8G1eUgij+e7L2vb/Es8057sva9v8AEs801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5pz3Ze17f4lnmms8G1eUgij+e7L2vb/Es8057sva9v8AEs801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5pz3Ze17f4lnmms8G1eUgij+e7L2vb/Es8057sva9v8AEs801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5pz3Ze17f4lnmms8G1eUgij+e7L2vb/Es8057sva9v8AEs801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5pz3Ze17f4lnmms8G1eUgij+e7L2vb/Es8057sva9v8AEs801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5pz3Ze17f4lnmms8G1eUgij+e7L2vb/Es8057sva9v8AEs801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5pz3Ze17f4lnmms8G1eUgij+e7L2vb/Es8057sva9v8AEs801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8AEs8057sva9v8SzzTWeDavKQRR/Pdl7Xt/iWeac92Xte3+JZ5prPBtXlIIo/nuy9r2/xLPNOe7L2vb/Es801ng2rykEUfz3Ze17f4lnmnPdl7Xt/iWeaazwbV5SCKP57sva9v8SzzTnuy9r2/xLPNNZ4Nq8pBFH892Xte3+JZ5oms8G1eXi1ERfpX48REQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB//2Q==" alt="Atualização Cadastral — Mendes e Mendes" class="banner-img">
+</header>
+
+<div class="wrapper">
+
+<!-- ACESSO -->
+<div id="bloco-acesso">
+  <h2>Identificação</h2>
+  <p>Digite seu CPF para carregar seus dados e preencher o formulário.</p>
+  <div class="input-cpf-wrap">
+    <input type="text" id="campo-cpf" placeholder="000.000.000-00" maxlength="14" autocomplete="off">
+    <button class="btn-entrar" onclick="buscarCPF()">Acessar</button>
+  </div>
+  <div id="erro-cpf">CPF não encontrado. Verifique e tente novamente.</div>
+</div>
+
+<!-- FORMULÁRIO -->
+<div id="bloco-formulario">
+
+  <div class="card-nome">
+    <div class="avatar" id="card-avatar">?</div>
+    <div class="info-col">
+      <h2 id="card-nome">—</h2>
+      <p id="card-info">—</p>
+    </div>
+    <span class="tag-cargo" id="card-cargo">—</span>
+    <button class="btn-sair" onclick="sair()">↩ Sair</button>
+  </div>
+
+  <div class="legenda">
+    <span style="font-weight:600; color:#2d3748;">Legenda:</span>
+    <div class="legenda-item"><div class="legenda-dot dot-pre"></div> Dado já disponível — confirme se ainda está correto</div>
+    <div class="legenda-item"><div class="legenda-dot dot-conf"></div> Dado requer atenção</div>
+    <div class="legenda-item"><div class="legenda-dot dot-vazio"></div> Informação a preencher</div>
+  </div>
+
+  <div class="aviso">
+    <strong>⚠ Leia antes de preencher</strong>
+    Campos em azul já foram importados do sistema. Verifique se estão corretos e corrija caso necessário. Campos em amarelo precisam de atenção especial. Campos em branco precisam ser preenchidos por você.
+  </div>
+
+  <!-- ════════ SEÇÃO 1 — DADOS PESSOAIS ════════ -->
+  <div class="secao" id="s1">
+    <div class="secao-header" onclick="toggleSecao('s1')">
+      <div class="secao-numero">1</div>
+      <h3>Dados Pessoais</h3>
+      <span class="secao-seta">▾</span>
+    </div>
+    <div class="secao-corpo">
+      <div class="grid grid-2">
+        <div class="campo" style="grid-column: span 2">
+          <label>Nome Completo <span class="req">*</span></label>
+          <input type="text" id="f-nome" class="pre-preenchido" readonly>
+        </div>
+        <div class="campo">
+          <label>CPF <span class="req">*</span></label>
+          <input type="text" id="f-cpf" class="pre-preenchido" readonly>
+        </div>
+        <div class="campo">
+          <label>PIS/PASEP <span class="tag-pre">Pré-carregado</span></label>
+          <input type="text" id="f-pis" class="pre-preenchido">
+        </div>
+        <div class="campo">
+          <label>Data de Nascimento <span class="req">*</span> <span class="tag-pre">Pré-carregado</span></label>
+          <input type="date" id="f-nascimento" class="pre-preenchido">
+        </div>
+        <div class="campo">
+          <label>Município de Nascimento <span class="req">*</span></label>
+          <input type="text" id="f-municipio-nasc" placeholder="Ex: Natal">
+        </div>
+        <div class="campo">
+          <label>Estado de Nascimento <span class="req">*</span></label>
+          <select id="f-uf-nasc">
+            <option value="">— Selecione —</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Sexo <span class="req">*</span></label>
+          <select id="f-sexo">
+            <option value="">— Selecione —</option>
+            <option>Masculino</option>
+            <option>Feminino</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Estado Civil <span class="req">*</span></label>
+          <select id="f-estado-civil">
+            <option value="">— Selecione —</option>
+            <option>Solteiro(a)</option>
+            <option>Casado(a)</option>
+            <option>Divorciado(a)</option>
+            <option>Viúvo(a)</option>
+            <option>União Estável</option>
+            <option>Separado(a) Judicialmente</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Raça/Cor <span class="req">*</span></label>
+          <select id="f-raca">
+            <option value="">— Selecione —</option>
+            <option>Branca</option>
+            <option>Preta</option>
+            <option>Parda</option>
+            <option>Amarela</option>
+            <option>Indígena</option>
+            <option>Não informado</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Grau de Instrução <span class="req">*</span></label>
+          <select id="f-instrucao">
+            <option value="">— Selecione —</option>
+            <option>Analfabeto</option>
+            <option>Ensino Fundamental Incompleto</option>
+            <option>Ensino Fundamental Completo</option>
+            <option>Ensino Médio Incompleto</option>
+            <option>Ensino Médio Completo</option>
+            <option>Educação Superior Incompleta</option>
+            <option>Educação Superior Completa</option>
+            <option>Pós-Graduação (Especialização)</option>
+            <option>Mestrado</option>
+            <option>Doutorado</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Grupo Sanguíneo <span class="req">*</span></label>
+          <select id="f-tipo-sanguineo">
+            <option value="">— Selecione —</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option>
+            <option>O+</option><option>O-</option>
+            <option>Não sei</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Nome da Mãe <span class="req">*</span></label>
+          <input type="text" id="f-mae" placeholder="Nome completo da mãe">
+        </div>
+        <div class="campo">
+          <label>Nome do Pai</label>
+          <input type="text" id="f-pai" placeholder="Nome completo do pai (ou 'Não consta')">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SEÇÃO 2 — DOCUMENTOS ════════ -->
+  <div class="secao" id="s2">
+    <div class="secao-header" onclick="toggleSecao('s2')">
+      <div class="secao-numero">2</div>
+      <h3>Documentos</h3>
+      <span class="secao-seta">▾</span>
+    </div>
+    <div class="secao-corpo">
+
+      <div class="subsecao-titulo">RG — Registro Geral</div>
+      <div class="grid grid-2">
+        <div class="campo">
+          <label>Número do RG <span class="req">*</span> <span class="tag-pre">Pré-carregado</span></label>
+          <input type="text" id="f-rg" class="pre-preenchido">
+        </div>
+        <div class="campo">
+          <label>Órgão Emissor do RG <span class="req">*</span></label>
+          <input type="text" id="f-rg-orgao" placeholder="Ex: SSP, DETRAN, ITEP">
+        </div>
+        <div class="campo">
+          <label>UF de Emissão do RG <span class="req">*</span></label>
+          <select id="f-rg-uf">
+            <option value="">— Selecione —</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Data de Emissão do RG <span class="req">*</span></label>
+          <input type="date" id="f-rg-data">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="subsecao-titulo">CTPS — Carteira de Trabalho Digital</div>
+      <p class="nota" style="margin-bottom:12px;">Informe a sequência digital: 7 primeiros dígitos = número da CTPS / 4 últimos dígitos = série</p>
+      <div class="grid grid-2">
+        <div class="campo">
+          <label>Número da CTPS (7 dígitos) <span class="tag-pre">Pré-carregado</span></label>
+          <input type="text" id="f-ctps" class="pre-preenchido" maxlength="7">
+        </div>
+        <div class="campo">
+          <label>Série da CTPS (4 dígitos + UF) <span class="tag-pre">Pré-carregado</span></label>
+          <input type="text" id="f-ctps-serie" class="pre-preenchido">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="subsecao-titulo">Título de Eleitor</div>
+      <div class="grid grid-3">
+        <div class="campo">
+          <label>Número do Título</label>
+          <input type="text" id="f-titulo" placeholder="Número do título">
+        </div>
+        <div class="campo">
+          <label>Zona</label>
+          <input type="text" id="f-titulo-zona" placeholder="Ex: 001">
+        </div>
+        <div class="campo">
+          <label>Seção</label>
+          <input type="text" id="f-titulo-secao" placeholder="Ex: 0023">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="subsecao-titulo">Certidão Civil</div>
+      <div class="grid grid-2">
+        <div class="campo">
+          <label>Tipo de Certidão <span class="req">*</span></label>
+          <select id="f-certidao-tipo" onchange="ajustarCertidao()">
+            <option value="">— Selecione —</option>
+            <option>Nascimento</option>
+            <option>Casamento</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Termo / Matrícula <span class="req">*</span></label>
+          <input type="text" id="f-cert-termo" placeholder="Número do termo ou matrícula">
+        </div>
+        <div class="campo">
+          <label>Livro</label>
+          <input type="text" id="f-cert-livro" placeholder="Número do livro">
+        </div>
+        <div class="campo">
+          <label>Folha</label>
+          <input type="text" id="f-cert-folha" placeholder="Número da folha">
+        </div>
+        <div class="campo">
+          <label>Cartório</label>
+          <input type="text" id="f-cert-cartorio" placeholder="Nome do cartório">
+        </div>
+        <div class="campo">
+          <label>Município da Certidão</label>
+          <input type="text" id="f-cert-municipio" placeholder="Município">
+        </div>
+        <div class="campo">
+          <label>UF</label>
+          <select id="f-cert-uf">
+            <option value="">— Selecione —</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Data de Emissão da Certidão</label>
+          <input type="date" id="f-cert-data">
+        </div>
+      </div>
+
+      <!-- RESERVISTA — só aparece para homens -->
+      <div id="bloco-reservista" style="display:none">
+        <div class="divider"></div>
+        <div class="subsecao-titulo">Certificado de Reservista</div>
+        <div class="grid grid-2">
+          <div class="campo">
+            <label>Número do Reservista</label>
+            <input type="text" id="f-reservista-num" placeholder="Número">
+          </div>
+          <div class="campo">
+            <label>Categoria</label>
+            <select id="f-reservista-cat">
+              <option value="">— Selecione —</option>
+              <option>1ª Categoria</option>
+              <option>2ª Categoria</option>
+              <option>3ª Categoria</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- OAB — só aparece para advogados -->
+      <div id="bloco-oab" style="display:none">
+        <div class="divider"></div>
+        <div class="subsecao-titulo">OAB</div>
+        <div class="grid grid-2">
+          <div class="campo">
+            <label>Número OAB <span class="tag-pre">Pré-carregado</span></label>
+            <input type="text" id="f-oab" class="pre-preenchido">
+          </div>
+          <div class="campo">
+            <label>UF da OAB <span class="req">*</span></label>
+            <select id="f-oab-uf">
+              <option value="">— Selecione —</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+              <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+              <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+              <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+              <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+              <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+              <option>SP</option><option>SE</option><option>TO</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════ SEÇÃO 3 — CNH ════════ -->
+  <div class="secao" id="s3">
+    <div class="secao-header" onclick="toggleSecao('s3')">
+      <div class="secao-numero">3</div>
+      <h3>Carteira de Motorista (CNH)</h3>
+      <span class="secao-seta">▾</span>
+    </div>
+    <div class="secao-corpo">
+      <div class="campo" style="margin-bottom:16px">
+        <label>Possui CNH?</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="tem-cnh" value="nao" onchange="toggleCNH(this)" checked><span>Não possuo</span></label>
+          <label class="radio-item"><input type="radio" name="tem-cnh" value="sim" onchange="toggleCNH(this)"><span>Sim, possuo CNH</span></label>
+        </div>
+      </div>
+      <div id="campos-cnh" style="display:none">
+        <div class="grid grid-2">
+          <div class="campo">
+            <label>Número da CNH <span class="req">*</span></label>
+            <input type="text" id="f-cnh-num" placeholder="Número">
+          </div>
+          <div class="campo">
+            <label>Categoria <span class="req">*</span></label>
+            <select id="f-cnh-cat">
+              <option value="">— Selecione —</option>
+              <option>A</option><option>B</option><option>AB</option>
+              <option>C</option><option>D</option><option>E</option>
+              <option>AC</option><option>AD</option><option>AE</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label>Órgão Emissor</label>
+            <input type="text" id="f-cnh-orgao" placeholder="Ex: DETRAN">
+          </div>
+          <div class="campo">
+            <label>UF de Emissão</label>
+            <select id="f-cnh-uf">
+              <option value="">— Selecione —</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+              <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+              <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+              <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+              <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+              <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+              <option>SP</option><option>SE</option><option>TO</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label>Data da 1ª Habilitação <span class="req">*</span></label>
+            <input type="date" id="f-cnh-prim">
+          </div>
+          <div class="campo">
+            <label>Data de Expedição <span class="req">*</span></label>
+            <input type="date" id="f-cnh-expedicao">
+          </div>
+          <div class="campo">
+            <label>Data de Vencimento <span class="req">*</span></label>
+            <input type="date" id="f-cnh-vencimento">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SEÇÃO 4 — TRABALHO ════════ -->
+  <div class="secao" id="s4">
+    <div class="secao-header" onclick="toggleSecao('s4')">
+      <div class="secao-numero">4</div>
+      <h3>Dados Funcionais</h3>
+      <span class="secao-seta">▾</span>
+    </div>
+    <div class="secao-corpo">
+      <div class="grid grid-2">
+        <div class="campo">
+          <label>Departamento <span class="req">*</span> <span class="tag-pre">Pré-carregado</span></label>
+          <select id="f-departamento">
+            <option value="">— Selecione —</option>
+            <option>ABERTURA</option><option>ACORDO</option><option>AGING</option>
+            <option>ANÁLISE &amp; EXECUÇÃO</option><option>AUDIÊNCIAS</option>
+            <option>CÁLCULOS</option><option>CALCULOS/AUDIENCIAS E CICLA</option>
+            <option>CICLA</option><option>CONTROLADORIA</option><option>DEFESA</option>
+            <option>DEPARTAMENTO PESSOAL</option><option>DIRETORIA</option>
+            <option>ENCERRAMENTO</option><option>FINANCEIRO</option>
+            <option>INTERMEDIÁRIAS</option><option>MARKETING</option>
+            <option>RECURSOS HUMANOS</option><option>RELEVANTE</option>
+            <option>SENTENÇA FAVORÁVEL</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Horário de Trabalho — CLT</label>
+          <div class="campo-fixo">Código 12 (padrão CLT)</div>
+        </div>
+        <div class="campo">
+          <label>Data de Admissão <span class="tag-pre">Pré-carregado</span></label>
+          <input type="date" id="f-admissao" class="pre-preenchido" readonly>
+        </div>
+        <div class="campo">
+          <label>Cargo <span class="tag-pre">Pré-carregado</span></label>
+          <input type="text" id="f-cargo" class="pre-preenchido" readonly>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SEÇÃO 5 — CONTATO ════════ -->
+  <div class="secao" id="s5">
+    <div class="secao-header" onclick="toggleSecao('s5')">
+      <div class="secao-numero">5</div>
+      <h3>Contato</h3>
+      <span class="secao-seta">▾</span>
+    </div>
+    <div class="secao-corpo">
+      <div class="grid grid-2">
+        <div class="campo">
+          <label>E-mail Corporativo <span class="tag-pre">Pré-carregado</span></label>
+          <input type="email" id="f-email-corp" class="pre-preenchido" readonly>
+        </div>
+        <div class="campo">
+          <label>E-mail Pessoal <span class="req">*</span></label>
+          <input type="email" id="f-email-pessoal" placeholder="seuemail@pessoal.com">
+        </div>
+        <div class="campo">
+          <label>Celular (WhatsApp) <span class="req">*</span></label>
+          <input type="tel" id="f-celular" placeholder="(84) 9 9999-9999">
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="subsecao-titulo">Endereço Residencial</div>
+      <div class="grid grid-2">
+        <div class="campo">
+          <label>CEP <span class="req">*</span></label>
+          <input type="text" id="f-cep" placeholder="00000-000" maxlength="9" oninput="mascaraCEP(this)">
+        </div>
+        <div class="campo">
+          <label>Logradouro (Rua/Av.) <span class="req">*</span></label>
+          <input type="text" id="f-logradouro" placeholder="Nome da rua ou avenida">
+        </div>
+        <div class="campo">
+          <label>Número <span class="req">*</span></label>
+          <input type="text" id="f-numero" placeholder="Nº ou S/N">
+        </div>
+        <div class="campo">
+          <label>Complemento</label>
+          <input type="text" id="f-complemento" placeholder="Apto, Bloco, Casa...">
+        </div>
+        <div class="campo">
+          <label>Bairro <span class="req">*</span></label>
+          <input type="text" id="f-bairro" placeholder="Bairro">
+        </div>
+        <div class="campo">
+          <label>Município <span class="req">*</span></label>
+          <input type="text" id="f-cidade" placeholder="Cidade">
+        </div>
+        <div class="campo">
+          <label>Estado <span class="req">*</span></label>
+          <select id="f-uf-end">
+            <option value="">— Selecione —</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SEÇÃO 6 — CONTA ════════ -->
+  <div class="secao" id="s6">
+    <div class="secao-header" onclick="toggleSecao('s6')">
+      <div class="secao-numero">6</div>
+      <h3>Dados Bancários — Bradesco</h3>
+      <span class="secao-seta">▾</span>
+    </div>
+    <div class="secao-corpo">
+      <p class="nota" style="margin-bottom:14px;">O pagamento de salário é realizado via Bradesco. Informe a conta corrente para crédito.</p>
+      <div class="grid grid-3">
+        <div class="campo">
+          <label>Agência <span class="req">*</span> <span class="tag-pre">Pré-carregado</span></label>
+          <input type="text" id="f-agencia" class="pre-preenchido">
+        </div>
+        <div class="campo">
+          <label>Conta Corrente <span class="req">*</span> <span class="tag-pre">Pré-carregado</span></label>
+          <input type="text" id="f-conta" class="pre-preenchido">
+        </div>
+        <div class="campo">
+          <label>Tipo de Conta <span class="tag-pre">Pré-carregado</span></label>
+          <select id="f-tipo-conta">
+            <option>Corrente</option>
+            <option>Poupança</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SEÇÃO 7 — DEFICIÊNCIA ════════ -->
+  <div class="secao" id="s7">
+    <div class="secao-header" onclick="toggleSecao('s7')">
+      <div class="secao-numero">7</div>
+      <h3>Pessoa com Deficiência</h3>
+      <span class="secao-seta">▾</span>
+    </div>
+    <div class="secao-corpo">
+      <div class="campo" style="margin-bottom:16px">
+        <label>Possui alguma deficiência?</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="tem-def" value="nao" onchange="toggleDef(this)" checked><span>Não</span></label>
+          <label class="radio-item"><input type="radio" name="tem-def" value="sim" onchange="toggleDef(this)"><span>Sim</span></label>
+        </div>
+      </div>
+      <div id="campos-def" style="display:none">
+        <div class="campo" style="margin-bottom:14px">
+          <label>Tipo(s) de Deficiência</label>
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" id="def-fisica"><span>Física</span></label>
+            <label class="check-item"><input type="checkbox" id="def-visual"><span>Visual</span></label>
+            <label class="check-item"><input type="checkbox" id="def-auditiva"><span>Auditiva</span></label>
+            <label class="check-item"><input type="checkbox" id="def-mental"><span>Mental</span></label>
+            <label class="check-item"><input type="checkbox" id="def-intelectual"><span>Intelectual</span></label>
+            <label class="check-item"><input type="checkbox" id="def-outras"><span>Outras</span></label>
+            <label class="check-item"><input type="checkbox" id="def-reabilitado"><span>Reabilitado</span></label>
+          </div>
+        </div>
+        <div class="campo">
+          <label>Possui Laudo Médico?</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="tem-laudo" value="nao"><span>Não</span></label>
+            <label class="radio-item"><input type="radio" name="tem-laudo" value="sim"><span>Sim — encaminhar ao DP</span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SEÇÃO 8 — DEPENDENTES ════════ -->
+  <div class="secao" id="s8">
+    <div class="secao-header" onclick="toggleSecao('s8')">
+      <div class="secao-numero">8</div>
+      <h3>Dependentes</h3>
+      <span class="secao-seta">▾</span>
+    </div>
+    <div class="secao-corpo">
+      <div class="campo" style="margin-bottom:16px">
+        <label>Possui dependentes?</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="tem-dep" value="nao" onchange="toggleDep(this)" checked><span>Não possuo</span></label>
+          <label class="radio-item"><input type="radio" name="tem-dep" value="sim" onchange="toggleDep(this)"><span>Sim, tenho dependentes</span></label>
+        </div>
+      </div>
+      <div id="lista-dependentes" style="display:none">
+        <div id="dep-container"></div>
+        <button type="button" class="btn-add" onclick="adicionarDependente()">+ Adicionar dependente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RODAPÉ -->
+  <div class="rodape-form">
+    <p>Ao enviar, você confirma que as informações prestadas são verdadeiras.<br>
+    Em caso de dúvidas, contate o DP: <strong>dp@mendesemendes.com.br</strong></p>
+    <button class="btn-enviar" onclick="enviarFormulario()">✓ Confirmar e Enviar</button>
+  </div>
+
+</div><!-- fim bloco-formulario -->
+
+<!-- SUCESSO -->
+<div id="bloco-sucesso">
+  <div class="sucesso-icone">✅</div>
+  <h2>Cadastro enviado com sucesso!</h2>
+  <p>Seus dados foram registrados e serão processados pelo Departamento Pessoal.<br>
+  Caso precise corrigir alguma informação, basta acessar o formulário novamente com seu CPF.<br><br>
+  Dúvidas: <strong>dp@mendesemendes.com.br</strong></p>
+</div>
+
+</div><!-- fim wrapper -->
+
+<script>
+// ═══════════════════════════════════════════════
+// BASE DE DADOS — gerada a partir das planilhas
+// ═══════════════════════════════════════════════
+const DB = {"83864113415": {"nome": "Albanisa Ferreira Da Silva", "cpf": "838.641.134-15", "is_advogado": false, "admissao": "2024-07-08", "cargo": "ASG", "equipe": "APOIO", "gestor": "Nayara", "email_corp": "albanisa.silva@mendesemendes.com.br", "rg": "1292195", "nascimento": "25/02/1972", "ctps": "10260", "serie_ctps": "0008-RN", "pis": "124.04501.40-4", "banco": "341", "agencia": "0382", "conta": "63190-1", "tipo_conta": "Corrente"}, "12495080456": {"nome": "Alcymara Crisley De Souza", "cpf": "124.950.804-56", "is_advogado": false, "admissao": "2023-10-17", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "alcymara.souza@mendesemendes.com.br", "rg": "3534164", "nascimento": "13/01/2000", "ctps": "4417550", "serie_ctps": "0050-RN", "pis": "203.79718.74-4", "banco": "341", "agencia": "6998", "conta": "75039-9", "tipo_conta": "Corrente"}, "70142320455": {"nome": "Aldenise Soares Da Silva", "cpf": "701.423.204-55", "is_advogado": false, "admissao": "2019-10-07", "cargo": "ASSISTENTE ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "aldenise.silva@mendesemendes.com.br", "rg": "3179926", "nascimento": "1995-10-31", "ctps": "7984343", "serie_ctps": "0030-RN", "pis": "204.21978.71-0", "banco": "341", "agencia": "0382", "conta": "27355-5", "tipo_conta": "Corrente"}, "04745467133": {"nome": "Alexandre Wagner Bezerra Miranda", "cpf": "047.454.671-33", "is_advogado": true, "admissao": "2024-04-29", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "alexandre.miranda@mendesemendes.com.br", "rg": "2957014", "nascimento": "25/01/1994", "ctps": "9762163", "serie_ctps": "0040-RN", "pis": "204.07434.07-5", "banco": "341", "agencia": "2746", "conta": "84078-0", "tipo_conta": "Poupança", "oab": "16931", "oab_uf": ""}, "10398654450": {"nome": "Alexia Rita Bezerra de Oliveira", "cpf": "103.986.544-50", "is_advogado": true, "admissao": "2024-09-16", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "alexia.oliveira@mendesemendes.com.br", "rg": "2690446", "nascimento": "22/04/1995", "ctps": "9579025", "serie_ctps": "0040-RN", "pis": "148.46121.69-7", "banco": "341", "agencia": "6530", "conta": "72910-9", "tipo_conta": "Corrente", "oab": "18396", "oab_uf": ""}, "08383565402": {"nome": "Alexsandro Martins Do Nascimento", "cpf": "083.835.654-02", "is_advogado": true, "admissao": "2022-03-22", "cargo": "ADVOGADO PLENO", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "alexsandro.nascimento@mendesemendes.com.br", "rg": "3463013", "nascimento": "31/07/1990", "ctps": "596137", "serie_ctps": "0020-RN", "pis": "135.476515.45-2", "banco": "341", "agencia": "1650", "conta": "54723-3", "tipo_conta": "Corrente", "oab": "15952", "oab_uf": ""}, "12963428405": {"nome": "Alice Fonseca de Lima", "cpf": "129.634.284-05", "is_advogado": false, "admissao": "2026-02-02", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "alice.lima@mendesemendes.com.br", "rg": "2825949", "nascimento": "2003-03-22", "ctps": "1296342", "serie_ctps": "8405-RN", "pis": "161.50217.64-8", "banco": "341", "agencia": "8380", "conta": "70685-6", "tipo_conta": "Corrente"}, "13125387400": {"nome": "Alice Rodrigues de Oliveira Teixeira", "cpf": "131.253.874-00", "is_advogado": false, "admissao": "2025-02-23", "cargo": "APRENDIZ", "equipe": "RECURSOS HUMANOS", "gestor": "Nayara", "email_corp": "alice.teixeira@mendesemendes.com.br", "rg": "3899753", "nascimento": "2006-03-31", "ctps": "1312538", "serie_ctps": "7400-RN", "pis": "269.37278.74-6", "banco": "341", "agencia": "7087", "conta": "18338-5", "tipo_conta": "Corrente"}, "09737302427": {"nome": "Allan Pessoa De Lacerda Nunes", "cpf": "097.373.024-27", "is_advogado": true, "admissao": "2024-04-29", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "allan.nunes@mendesemendes.com.br", "rg": "2622602", "nascimento": "21/08/1991", "ctps": "6864871", "serie_ctps": "0040-RN", "pis": "212.84401.14-8", "banco": "341", "agencia": "6530", "conta": "74230-0", "tipo_conta": "Poupança", "oab": "18874", "oab_uf": ""}, "09203911413": {"nome": "Allyson Carlos De Souza", "cpf": "092.039.114-13", "is_advogado": false, "admissao": "2016-08-12", "cargo": "ANALISTA ADMINISTRATIVO", "equipe": "CONTROLADORIA", "gestor": "Wallace", "email_corp": "allyson.carlos@mendesemendes.com.br", "rg": "3010688", "nascimento": "1992-09-09", "ctps": "3170570", "serie_ctps": "0020-RN", "pis": "203.79718.72-8", "banco": "341", "agencia": "6998", "conta": "16750-3", "tipo_conta": "Corrente"}, "70133462412": {"nome": "Amanda Cristina Medeiros Trindade", "cpf": "701.334.624-12", "is_advogado": true, "admissao": "2022-05-16", "cargo": "ADVOGADO JUNIOR", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "amanda.trindade@mendesemendes.com.br", "rg": "3068933", "nascimento": "26/03/1995", "ctps": "3157487", "serie_ctps": "0040-PB", "pis": "212.76091.43-7", "banco": "341", "agencia": "6530", "conta": "57311-9", "tipo_conta": "Corrente", "oab": "21638", "oab_uf": ""}, "10269076409": {"nome": "Ana Beatriz De Oliveira Costa", "cpf": "102.690.764-09", "is_advogado": true, "admissao": "2023-07-24", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "beatriz.costa@mendesemendes.com.br", "rg": "2586888", "nascimento": "24/07/1992", "ctps": "5732551", "serie_ctps": "0030-RN", "pis": "133.17549.64-4", "banco": "341", "agencia": "3619", "conta": "18413-2", "tipo_conta": "Corrente", "oab": "19426", "oab_uf": ""}, "07303388435": {"nome": "Ana Beatriz de Oliveira Faria", "cpf": "073.033.884-35", "is_advogado": true, "admissao": "2024-09-16", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "ana.faria@mendesemendes.com.br", "rg": "2662293", "nascimento": "04/05/1996", "ctps": "7978564", "serie_ctps": "0030-RN", "pis": "201.72457.13-5", "banco": "341", "agencia": "0382", "conta": " 27118-7", "tipo_conta": "Corrente", "oab": "20479", "oab_uf": ""}, "10582816408": {"nome": "Ana Clara De Araujo Freitas", "cpf": "105.828.164-08", "is_advogado": true, "admissao": "2022-03-22", "cargo": "ADVOGADO PLENO", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "anaclara.freitas@mendesemendes.com.br", "rg": "3426499", "nascimento": "13/11/1998", "ctps": "5727166", "serie_ctps": "0050-RN", "pis": "209.74669.12-6", "banco": "341", "agencia": "6530", "conta": "55893-8", "tipo_conta": "Corrente", "oab": "18833", "oab_uf": ""}, "08076640490": {"nome": "Ana Claudia Ramos de Lima", "cpf": "080.766.404-90", "is_advogado": true, "admissao": "2024-09-16", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "ana.lima@mendesemendes.com.br", "rg": "2787481", "nascimento": "19/01/1991", "ctps": "807664", "serie_ctps": "0490 RN", "pis": "268.09848.79-5", "banco": "341", "agencia": "9314", "conta": "79924-9", "tipo_conta": "Corrente", "oab": "14215", "oab_uf": ""}, "05508361448": {"nome": "Ana Flavia de Andrade Camara", "cpf": "055.083.614-48", "is_advogado": false, "admissao": "2025-08-14", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "ana.camara@mendesemendes.com.br", "rg": "1764384", "nascimento": "1985-02-18", "ctps": "550836", "serie_ctps": "1448-RN", "pis": "135.57886.45-9", "banco": "341", "agencia": "1339", "conta": "39600-2", "tipo_conta": "Corrente", "oab": "7717", "oab_uf": ""}, "70741295423": {"nome": "Ana Karoline Cosme Rodrigues", "cpf": "707.412.954-23", "is_advogado": false, "admissao": "2019-09-23", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "karoline.rodrigues@mendesemendes.com.br", "rg": "3261661", "nascimento": "05/08/1999", "ctps": "6866809", "serie_ctps": "0040-RN", "pis": "201.33961.87-1", "banco": "341", "agencia": "8695", "conta": "42449-2", "tipo_conta": "Corrente"}, "06324556751": {"nome": "Ana Luiza Martins Soares", "cpf": "063.245.567-51", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIA", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "ana.soares@mendesemendes.com.br", "rg": "683141922", "nascimento": "2004-07-13", "ctps": "632455", "serie_ctps": "6751-SP", "pis": "", "banco": "341", "agencia": "2134", "conta": "67384-6", "tipo_conta": "Corrente"}, "09778025401": {"nome": "Ana Paula De Oliveira Penha", "cpf": "097.780.254-01", "is_advogado": true, "admissao": "2022-02-09", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "anapaula.penha@mendesemendes.com.br", "rg": "3104957", "nascimento": "10/11/1994", "ctps": "8107255", "serie_ctps": "0040-RN", "pis": "212.89046.52-4", "banco": "341", "agencia": "0382", "conta": "34557-7", "tipo_conta": "Corrente", "oab": "18169", "oab_uf": ""}, "10700043403": {"nome": "Ana Paula De Sousa Pedroza", "cpf": "107.000.434-03", "is_advogado": false, "admissao": "2024-03-11", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "anapaula.pedroza@mendesemendes.com.br", "rg": "2526412", "nascimento": "07/05/1993", "ctps": "1868703", "serie_ctps": "0050-RN", "pis": "145.51319.29-1", "banco": "341", "agencia": "0382", "conta": "61197-8", "tipo_conta": "Corrente"}, "70037016423": {"nome": "Ana Paula Lobato Matias", "cpf": "700.370.164-23", "is_advogado": true, "admissao": "2021-08-02", "cargo": "ADVOGADO JUNIOR", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "anapaula.matias@mendesemendes.com.br", "rg": "3163813", "nascimento": "31/12/1994", "ctps": "4799909", "serie_ctps": "0040-RN", "pis": "210.33324.97-5", "banco": "341", "agencia": "6530", "conta": "26351-3", "tipo_conta": "Corrente", "oab": "17868", "oab_uf": ""}, "01648703429": {"nome": "Ana Tercia Dos Santos Soares", "cpf": "016.487.034-29", "is_advogado": false, "admissao": "2019-12-09", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "anatercia.soares@mendesemendes.com.br", "rg": "1884667", "nascimento": "20/09/1992", "ctps": "1504978", "serie_ctps": "0030-RN", "pis": "160.92805.41-4", "banco": "341", "agencia": "0382", "conta": "28380-2", "tipo_conta": "Corrente"}, "01807244440": {"nome": "Ananda Thalita De Oliveira Silva", "cpf": "018.072.444-40", "is_advogado": true, "admissao": "2021-05-18", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "ananda.silva@mendesemendes.com.br", "rg": "3239624", "nascimento": "04/09/1996", "ctps": "4796051", "serie_ctps": "0040-RN", "pis": "145.86000.96-8", "banco": "341", "agencia": "6998", "conta": "38337-3", "tipo_conta": "Corrente", "oab": "19807", "oab_uf": ""}, "08781799411": {"nome": "Andreia Lopes De Araújo Veiga", "cpf": "087.817.994-11", "is_advogado": false, "admissao": "2023-08-03", "cargo": "ASSISTENTE JURÍDICO", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "andreia.veiga@mendesemendes.com.br", "rg": "2974296", "nascimento": "20/08/1990", "ctps": "5265728", "serie_ctps": "0030-RN", "pis": "160.29755.63-4", "banco": "341", "agencia": "0382", "conta": "45413-0", "tipo_conta": "Poupança"}, "10413994481": {"nome": "Andresa Carneiro De Melo", "cpf": "104.139.944-81", "is_advogado": false, "admissao": "2019-10-07", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "andresa.melo@mendesemendes.com.br", "rg": "9000454", "nascimento": "19/08/1994", "ctps": "69672", "serie_ctps": "0053-PE", "pis": "161.61976.48-0", "banco": "341", "agencia": "1339", "conta": "53568-2", "tipo_conta": "Corrente"}, "71356709494": {"nome": "Andrielly Duarte de Farias", "cpf": "713.567.094-94", "is_advogado": false, "admissao": "2025-10-20", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "andrielly.farias@mendesemendes.com.br", "rg": "3721866", "nascimento": "2002-02-09", "ctps": "7490248", "serie_ctps": "0050-RN", "pis": "212.65111.10-5", "oab": "22864", "oab_uf": ""}, "03442947499": {"nome": "Aneele Menezes Magalhaes", "cpf": "034.429.474-99", "is_advogado": true, "admissao": "2019-11-01", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "aneele.magalhaes@mendesemendes.com.br", "rg": "1733932", "nascimento": "28/03/1980", "ctps": "8057284", "serie_ctps": "0010-RN", "pis": "134.15429.45-7", "banco": "341", "agencia": "0382", "conta": "28004-8", "tipo_conta": "Corrente", "oab": "5063", "oab_uf": ""}, "07136843480": {"nome": "Anna Victória Gomes de Souza", "cpf": "071.368.434-80", "is_advogado": false, "admissao": "2025-06-23", "cargo": "ESTAGIÁRIO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "anna.souza@mendesemendes.com.br", "rg": "2525704", "nascimento": "2001-12-25", "ctps": "713684", "serie_ctps": "3480-RN", "pis": "269.03582.37-0", "banco": "341", "agencia": "6530", "conta": "92176-3", "tipo_conta": "Corrente"}, "70501652477": {"nome": "Arthur Vinícius Ferreira Rocha", "cpf": "705.016.524-77", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIO", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "arthur.rocha@mendesemendes.com.br", "rg": "3467450", "nascimento": "2006-02-08", "ctps": "7050165", "serie_ctps": "2477-RN", "pis": ""}, "01647056438": {"nome": "Bruna Nascimento de Sousa", "cpf": "016.470.564-38", "is_advogado": true, "admissao": "2024-09-16", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "bruna.sousa@mendesemendes.com.br", "rg": "3034274", "nascimento": "05/10/1992", "ctps": "1504352", "serie_ctps": "0030-RN", "pis": "132.58749.64-6", "banco": "341", "agencia": "6530", "conta": "79113-3", "tipo_conta": "Corrente", "oab": "20134", "oab_uf": ""}, "09349514460": {"nome": "Caline Do Nascimento Farias", "cpf": "093.495.144-60", "is_advogado": false, "admissao": "2020-10-22", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "caline.farias@mendesemendes.com.br", "rg": "2992886", "nascimento": "04/02/1997", "ctps": "6234661", "serie_ctps": "0030-RN", "pis": "163.88271.11-2", "banco": "341", "agencia": "0382", "conta": "31443-3", "tipo_conta": "Corrente"}, "01136544488": {"nome": "Carla Alves Do Nascimento", "cpf": "011.365.444-88", "is_advogado": false, "admissao": "2016-09-01", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "carla.nascimento@mendesemendes.com.br", "rg": "2140038", "nascimento": "07/03/1983", "ctps": "9559", "serie_ctps": "0017-RN", "pis": "190.0113545-8", "banco": "341", "agencia": "0382", "conta": "42522-1", "tipo_conta": "Corrente"}, "81296932400": {"nome": "Carlos Jose Da Silva", "cpf": "812.969.324-00", "is_advogado": true, "admissao": "2022-04-01", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "carlos.silva@mendesemendes.com.br", "rg": "1255727", "nascimento": "20/12/1975", "ctps": "70620", "serie_ctps": "0009-RN", "pis": "170.41429.35-9", "banco": "341", "agencia": "6530", "conta": "55931-6", "tipo_conta": "Corrente", "oab": "8371", "oab_uf": ""}, "09284070473": {"nome": "Carolina Rosa Da Silva Assunção", "cpf": "092.840.704-73", "is_advogado": true, "admissao": "2023-07-24", "cargo": "ADVOGADA PLENA", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "carolina.assuncao@mendesemendes.com.br", "rg": "2054870", "nascimento": "1992-05-24", "ctps": "6240599", "serie_ctps": "0030-RN", "pis": "203.18170.06-4", "banco": "341", "agencia": "6530", "conta": "66436-3", "tipo_conta": "Corrente", "oab": "21379", "oab_uf": ""}, "71380908469": {"nome": "Cleverson Lucas Oliveira Ribeiro de Souza", "cpf": "713.809.084-69", "is_advogado": false, "admissao": "2026-05-11", "cargo": "APRENDIZ", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "cleverson.souza@mendesemendes.com.br", "rg": "713.809.084-69", "nascimento": "2006-10-04", "ctps": "7138090", "serie_ctps": "8469-RN", "pis": "228.19674.81-9", "banco": "341", "agencia": "995", "conta": "130544-1", "tipo_conta": "Corrente"}, "09659770480": {"nome": "Daniel Cassio Da Silva Melo", "cpf": "096.597.704-80", "is_advogado": false, "admissao": "2023-10-24", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "daniel.melo@mendesemendes.com.br", "rg": "3011326", "nascimento": "14/07/1994", "ctps": "5739052", "serie_ctps": "0030-RN", "pis": "148.47050.27-0", "banco": "341", "agencia": "6530", "conta": "68315-7", "tipo_conta": "Corrente"}, "11543862446": {"nome": "Daniel Felix de Lima Junior", "cpf": "115.438.624-46", "is_advogado": false, "admissao": "2025-06-23", "cargo": "ESTAGIÁRIO", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "daniel.lima@mendesemendes.com.br", "rg": "3082823", "nascimento": "1998-08-18", "ctps": "7491009", "serie_ctps": "0050-RN", "pis": "200.73436.66-0", "banco": "341", "agencia": "9314", "conta": "65360-2", "tipo_conta": "Corrente"}, "08285157431": {"nome": "Daniel Victor De Sousa Campos", "cpf": "082.851.574-31", "is_advogado": true, "admissao": "2024-07-01", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "daniel.campos@mendesemendes.com.br", "rg": "2407443", "nascimento": "1989-07-22", "ctps": "433594", "serie_ctps": "0020-RN", "pis": "134.24455.27-9", "banco": "341", "agencia": "6530", "conta": "76321-5", "tipo_conta": "Corrente", "oab": "23218", "oab_uf": ""}, "03524113419": {"nome": "Danielle Christine Duarte de Medeiros", "cpf": "035.241.134-19", "is_advogado": true, "admissao": "2024-09-16", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "danielle.medeiros@mendesemendes.com.br", "rg": "1922733", "nascimento": "09/03/1981", "ctps": "352411", "serie_ctps": "3419-RN", "pis": "168.70093.20-3", "banco": "341", "agencia": "6530", "conta": "79020-0", "tipo_conta": "Poupança", "oab": "8049", "oab_uf": ""}, "11258718499": {"nome": "Daniely Andressa Paulino de Oliveira", "cpf": "112.587.184-99", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIA", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "daniely.oliveira@mendesemendes.com.br", "rg": "3287555", "nascimento": "2004-07-03", "ctps": "1125871", "serie_ctps": "8499-RN", "pis": ""}, "09761637484": {"nome": "Daniely Cristina Da Cunha Lopes", "cpf": "097.616.374-84", "is_advogado": true, "admissao": "2015-01-08", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "daniely@mendesemendes.com.br", "rg": "2928565", "nascimento": "02/08/1990", "ctps": "9077276", "serie_ctps": "0040-RN", "pis": "097.61637.48-4", "banco": "341", "agencia": "0382", "conta": "16760-9", "tipo_conta": "Corrente", "oab": "20822", "oab_uf": ""}, "70359405452": {"nome": "Darlan Augusto Oliveira Do Nascimento", "cpf": "703.594.054-52", "is_advogado": false, "admissao": "2025-01-20", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "darlan.augusto@mendesemendes.com.br", "rg": "4041766", "nascimento": "09/11/2004", "ctps": "7035940", "serie_ctps": "5452-RN", "pis": "236.91600.08-1", "banco": "341", "agencia": "6998", "conta": "85220-3", "tipo_conta": "Corrente"}, "10836718470": {"nome": "Diogo Rafael Da Silva", "cpf": "108.367.184-70", "is_advogado": false, "admissao": "2021-01-18", "cargo": "ASSISTENTE ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "diogo.rafael@mendesemendes.com.br", "rg": "3041620", "nascimento": "03/12/1996", "ctps": "3900108", "serie_ctps": "0040-RN", "pis": "142.07485.22-4", "banco": "341", "agencia": "0382", "conta": "31394-8", "tipo_conta": "Corrente"}, "10842679421": {"nome": "Dominique Alice da Silva Gomes", "cpf": "108.426.794-21", "is_advogado": false, "admissao": "2025-05-08", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "dominique.gomes@mendesemendes.com.br", "rg": "3363079", "nascimento": "1995-09-03", "ctps": "7980132", "serie_ctps": "0030-RN", "pis": "201.81345.94-8", "banco": "341", "agencia": "7087", "conta": "24344-5", "tipo_conta": "Corrente"}, "08040413427": {"nome": "Douglas Luis Carneiro De Souza Santos", "cpf": "080.404.134-27", "is_advogado": true, "admissao": "2024-04-29", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "douglas.santos@mendesemendes.com.br", "rg": "7246870", "nascimento": "22/11/1992", "ctps": "98342", "serie_ctps": "0060-PE", "pis": "238.40729.99-4", "banco": "341", "agencia": "6530", "conta": "74237-5", "tipo_conta": "Corrente", "oab": "50941", "oab_uf": ""}, "06082686403": {"nome": "Edna Maria Gomes De Lima", "cpf": "060.826.864-03", "is_advogado": false, "admissao": "2022-05-16", "cargo": "ASSISTENTE JURÍDICO", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "edna.lima@mendesemendes.com.br", "rg": "2368628", "nascimento": "11/10/1984", "ctps": "5096584", "serie_ctps": "0010-RN", "pis": "134.43005.19-4", "banco": "341", "agencia": "0382", "conta": "36406-5", "tipo_conta": "Corrente", "oab": "23928", "oab_uf": ""}, "08204769431": {"nome": "Eduardo Daniel Rafael Do Nascimento Gomes", "cpf": "082.047.694-31", "is_advogado": true, "admissao": "2022-03-22", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "eduardo.nascimento@mendesemendes.com.br", "rg": "6530990", "nascimento": "30/05/1990", "ctps": "3265591", "serie_ctps": "0020-RN", "pis": "131.94826.64-5", "banco": "341", "agencia": "6530", "conta": "55901-9", "tipo_conta": "Corrente", "oab": "14608", "oab_uf": ""}, "06598562473": {"nome": "Elaine Temistocles De Brito", "cpf": "065.985.624-73", "is_advogado": true, "admissao": "2022-07-04", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "elaine.brito@mendesemendes.com.br", "rg": "2117346", "nascimento": "21/03/1989", "ctps": "5947345", "serie_ctps": "0011-RN", "pis": "206.67290.29-4", "banco": "341", "agencia": "7123", "conta": "42370-4", "tipo_conta": "Corrente", "oab": "22098", "oab_uf": ""}, "07192553417": {"nome": "Elizabeth Da Silva Barros", "cpf": "071.925.534-17", "is_advogado": true, "admissao": "2022-04-25", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "elizabeth.barros@mendesemendes.com.br", "rg": "1819112", "nascimento": "28/05/1993", "ctps": "7357568", "serie_ctps": "0030-RN", "pis": "139.83333.45-0", "banco": "341", "agencia": "9314", "conta": "60224-5", "tipo_conta": "Corrente", "oab": "15851", "oab_uf": ""}, "09473465467": {"nome": "Erika Cristina Nascimento Da Silva", "cpf": "094.734.654-67", "is_advogado": false, "admissao": "2017-04-11", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "erika.silva@mendesemendes.com.br", "rg": "2820043", "nascimento": "27/05/1993", "ctps": "5263891", "serie_ctps": "0030-RN", "pis": "160.29665.29-5", "banco": "341", "agencia": "0382", "conta": "20727-2", "tipo_conta": "Corrente"}, "06833644489": {"nome": "Ewerson Joabe De Melo Ribeiro Barbosa", "cpf": "068.336.444-89", "is_advogado": true, "admissao": "2023-10-16", "cargo": "SUPERVISOR", "equipe": "ANÁLISE & EXECUÇÃO", "gestor": "Damiana", "email_corp": "joabe.barbosa@mendesemendes.com.br", "rg": "2327796", "nascimento": "09/03/1989", "ctps": "5973951", "serie_ctps": "0010-RN", "pis": "160.25497.33-9", "banco": "341", "agencia": "9314", "conta": "74586-1", "tipo_conta": "Corrente", "oab": "15444", "oab_uf": ""}, "01676225447": {"nome": "Ezyle Rodrigues De Oliveira", "cpf": "016.762.254-47", "is_advogado": true, "admissao": "2020-03-16", "cargo": "ADVOGADO PLENO", "equipe": "CONTROLADORIA", "gestor": "Wallace", "email_corp": "ezyle.oliveira@mendesemendes.com.br", "rg": "3094969", "nascimento": "27/03/1994", "ctps": "2277142", "serie_ctps": "0030-RN", "pis": "132.81674.64-9", "banco": "341", "agencia": "0382", "conta": "29412-2", "tipo_conta": "Corrente", "oab": "19173", "oab_uf": ""}, "00856496430": {"nome": "Fabio Guedes Da Silva", "cpf": "008.564.964.-30", "is_advogado": false, "admissao": "2022-12-06", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "fabio.silva@mendesemendes.com.br", "rg": "1609664", "nascimento": "02/01/1981", "ctps": "40337", "serie_ctps": "0013-RN", "pis": "170.52426.88-7", "banco": "341", "agencia": "8695", "conta": "09902-1", "tipo_conta": "Corrente"}, "03168902438": {"nome": "Fábio Perigo da Silva", "cpf": "031.689.024-38", "is_advogado": true, "admissao": "2024-09-16", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "fabio.perigo@mendesemendes.com.br", "rg": "1715675", "nascimento": "22/04/1981", "ctps": "35871", "serie_ctps": "0014-RN", "pis": "126.26882.64-1", "banco": "341", "agencia": "6530", "conta": "79080-4", "tipo_conta": "Corrente", "oab": "14809", "oab_uf": ""}, "04851326483": {"nome": "Felipe Amaral Dos Santos", "cpf": "048.513.264-83", "is_advogado": false, "admissao": "2022-04-18", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "felipe.santos@mendesemendes.com.br", "rg": "2480702", "nascimento": "02/04/1994", "ctps": "4720418", "serie_ctps": "0030-RN", "pis": "162.04198.30-1", "banco": "341", "agencia": "9314", "conta": "57637-3", "tipo_conta": "Corrente"}, "70184302404": {"nome": "Felipe de Araújo Spinola", "cpf": "701.843.024-04", "is_advogado": true, "admissao": "2025-07-14", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "felipe.spinola@mendesemendes.com.br", "rg": "2525208", "nascimento": "1998-08-12", "ctps": "7018430", "serie_ctps": "2404-RN", "pis": "", "banco": "341", "agencia": "6530", "conta": "93542-5", "tipo_conta": "Corrente", "oab": "22593", "oab_uf": ""}, "70719577462": {"nome": "Felipe Matheus Salustiano Marques Da Silva", "cpf": "707.195.774-62", "is_advogado": false, "admissao": "2021-04-12", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "felipe.silva@mendesemendes.com.br", "rg": "3624569", "nascimento": "1999-11-18", "ctps": "3082772", "serie_ctps": "0050-RN", "pis": "207.45267.15-1", "banco": "341", "agencia": "0382", "conta": "32099-2", "tipo_conta": "Corrente"}, "01161694439": {"nome": "Fellipe Provenzano Bordini", "cpf": "011.616.944-39", "is_advogado": true, "admissao": "2023-10-16", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "fellipe.bordini@mendesemendes.com.br", "rg": "1617671", "nascimento": "16/11/1981", "ctps": "2995410", "serie_ctps": "0010-RN", "pis": "128.14626.64-9", "banco": "341", "agencia": "9314", "conta": "74588-7", "tipo_conta": "Corrente", "oab": "8748", "oab_uf": ""}, "10008088403": {"nome": "Fernando Prudencio Veiga Fernandes", "cpf": "100.080.884-03", "is_advogado": true, "admissao": "2021-11-16", "cargo": "ADVOGADO PLENO", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "fernando.fernandes@mendesemendes.com.br", "rg": "2526540", "nascimento": "1991-08-30", "ctps": "3260396", "serie_ctps": "0020-RN", "pis": "131.92508.64-6", "banco": "341", "agencia": "0382", "conta": "33511-5", "tipo_conta": "Corrente", "oab": "15795", "oab_uf": ""}, "70172879400": {"nome": "Franciedna Silva Sobrinho", "cpf": "701.728.794-00", "is_advogado": false, "admissao": "2025-07-28", "cargo": "ESTAGIÁRIO", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "franciedna.sobrinho@mendesemendes.com.br", "rg": "3303744", "nascimento": "2001-11-10", "ctps": "4968513", "serie_ctps": "0060-RN", "pis": "206.41382.39-6"}, "07119902474": {"nome": "Francilene Vieira Barbosa Bezerra", "cpf": "071.199.024-74", "is_advogado": false, "admissao": "2019-03-14", "cargo": "ASSISTENTE ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "francilene.oliveira@mendesemendes.com.br", "rg": "2676702", "nascimento": "10/03/1983", "ctps": "1513816", "serie_ctps": "0030-RN", "pis": "162.00011.83-5", "banco": "341", "agencia": "0382", "conta": "25376-3", "tipo_conta": "Corrente"}, "04839474400": {"nome": "Francisco Alysson Aquino De Andrade", "cpf": "048.394.744-00", "is_advogado": true, "admissao": "2024-04-29", "cargo": "ADVOGADO PLENO", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "alyson.andrade@mendesemendes.com.br", "rg": "2544957", "nascimento": "04/09/1983", "ctps": "5937493", "serie_ctps": "0010-RN", "pis": "129.12920.64-9", "banco": "341", "agencia": "6530", "conta": "64334-2", "tipo_conta": "Corrente", "oab": "7561", "oab_uf": ""}, "09440777494": {"nome": "Francisco Rayrakson Silva alves", "cpf": "094.407.774-94", "is_advogado": false, "admissao": "2025-05-08", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "francisco.alves@mendesemendes.com.br", "rg": "2016137", "nascimento": "1992-01-23", "ctps": "4409695", "serie_ctps": "0020-RN", "pis": "137.79062.27-4", "banco": "341", "agencia": "2887", "conta": "46307-9", "tipo_conta": "Corrente"}, "01664896465": {"nome": "Francisco Wendell Da Costa Gomes Junior", "cpf": "016.648.964-65", "is_advogado": false, "admissao": "2021-06-28", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "wendell.gomes@mendesemendes.com.br", "rg": "3140388", "nascimento": "17/04/1999", "ctps": "2391882", "serie_ctps": "0060-RN", "pis": "206.61256.49-3", "banco": "341", "agencia": "0382", "conta": "32620-5", "tipo_conta": "Corrente"}, "01742360424": {"nome": "Gabriel Queiroga Palacio de Lima", "cpf": "017.423.604-24", "is_advogado": true, "admissao": "2025-01-20", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "gabriel.lima@mendesemendes.com.br", "rg": "3034300", "nascimento": "2002-07-12", "ctps": "174236", "serie_ctps": "0424-RN", "pis": "201.72463.90-9", "banco": "341", "agencia": "6530", "conta": "77347-9", "tipo_conta": "Corrente", "oab": "23034", "oab_uf": ""}, "52778550259": {"nome": "Gabriela Vieira Ximenes", "cpf": "527.785.502-59", "is_advogado": true, "admissao": "2024-04-29", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "gabriela.ximenes@mendesemendes.com.br", "rg": "819099", "nascimento": "02/04/1986", "ctps": "5277855", "serie_ctps": "0259-RN", "pis": "", "banco": "341", "agencia": "6530", "conta": "72078-5", "tipo_conta": "Corrente", "oab": "21217", "oab_uf": ""}, "12831606411": {"nome": "Giovanna Patricia Almeida Gomes", "cpf": "128.316.064.11", "is_advogado": true, "admissao": "2024-10-01", "cargo": "ADVOGADO JUNIOR", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "giovanna.gomes@mendesemendes.com.br", "rg": "2965499", "nascimento": "2000-02-29", "ctps": "7489500", "serie_ctps": "0050-RN", "pis": "139.23459.81-4", "banco": "341", "agencia": "8380", "conta": "54726-8", "tipo_conta": "Corrente", "oab": "21592", "oab_uf": ""}, "05571937459": {"nome": "Guilherme Augusto Da Costa Azevedo", "cpf": "055.719.374-59", "is_advogado": true, "admissao": "2024-04-29", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "guilherme.azevedo@mendesemendes.com.br", "rg": "3132485", "nascimento": "30/08/1996", "ctps": "557193", "serie_ctps": "7459-RN", "pis": "270.94378.76-4", "banco": "341", "agencia": "6530", "conta": "74236-7", "tipo_conta": "Corrente", "oab": "20859", "oab_uf": ""}, "11768102430": {"nome": "Gustavo Francisco Vieira Neto", "cpf": "117.681.024-30", "is_advogado": false, "admissao": "2021-03-01", "cargo": "ASSISTENTE JURÍDICO", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "gustavo.vieira@mendesemendes.com.br", "rg": "2865316", "nascimento": "08/05/1995", "ctps": "6865104", "serie_ctps": "0040-RN", "pis": "204.63972.95-8", "banco": "341", "agencia": "9314", "conta": "48875-1", "tipo_conta": "Corrente"}, "00330996266": {"nome": "Gustavo Henrique Lira De Paiva", "cpf": "003.309.962-66", "is_advogado": false, "admissao": "2024-04-29", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "gustavo.paiva@mendesemendes.com.br", "rg": "4.580.73", "nascimento": "1991-08-19", "ctps": "1343814", "serie_ctps": "0020-AP", "pis": "127.67616.03-4", "banco": "341", "agencia": "6998", "conta": "84366-5", "tipo_conta": "Corrente"}, "10897608410": {"nome": "Helena Beatriz Lopes Santos", "cpf": "108.976.084-10", "is_advogado": true, "admissao": "2023-08-16", "cargo": "SUPERVISOR", "equipe": "DEFESA", "gestor": "Damiana", "email_corp": "helena.santos@mendesemendes.com.br", "rg": "3010820", "nascimento": "1996-07-19", "ctps": "7356286", "serie_ctps": "0030-RN", "pis": "203.87477.81-5", "banco": "341", "agencia": "0382", "conta": "45695-2", "tipo_conta": "Corrente", "oab": "20128", "oab_uf": ""}, "05668285456": {"nome": "Heverton Lins Bezerra", "cpf": "056.682.854-56", "is_advogado": true, "admissao": "2022-12-06", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "heverton.bezerra@mendesemendes.com.br", "rg": "2526714", "nascimento": "04/09/1986", "ctps": "9972207", "serie_ctps": "0010-RN", "pis": "204.00323.30-8", "banco": "341", "agencia": "9314", "conta": "68885-5", "tipo_conta": "Corrente", "oab": "11305", "oab_uf": ""}, "01419771400": {"nome": "Ingrid Silva De Melo", "cpf": "014.197.714-00", "is_advogado": false, "admissao": "2017-01-04", "cargo": "ASSISTENTE ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "ingrid@mendesemendes.com.br", "rg": "2243810", "nascimento": "13/10/1988", "ctps": "5110916", "serie_ctps": "0010-RN", "pis": "203.79625.25-8", "banco": "341", "agencia": "0382", "conta": "20682-9", "tipo_conta": "Corrente"}, "10726283410": {"nome": "Íris da Apresentação Rodrigues Silva", "cpf": "107.262.834-10", "is_advogado": true, "admissao": "2024-09-16", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "iris.silva@mendesemendes.com.br", "rg": "2946701", "nascimento": "21/11/1994", "ctps": "7981146", "serie_ctps": "0030-RN", "pis": "162.04881.37-0", "banco": "341", "agencia": "6998", "conta": "92775-7", "tipo_conta": "Corrente", "oab": "20046", "oab_uf": ""}, "10636593452": {"nome": "Isabella Cavalcanti Coutinho Da Silveira", "cpf": "106.365.934-52", "is_advogado": true, "admissao": "2021-09-20", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "isabella.silveira@mendesemendes.com.br", "rg": "1877931", "nascimento": "03/01/1997", "ctps": "1063659", "serie_ctps": "3452-RN", "pis": "139.21576.93-7", "banco": "341", "agencia": "0382", "conta": "33654-3", "tipo_conta": "Corrente", "oab": "18557", "oab_uf": ""}, "11895645484": {"nome": "Isabelly Cristina Batista Macario", "cpf": "118.956.454-84", "is_advogado": false, "admissao": "2020-01-22", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "isabelly.macario@mendesemendes.com.br", "rg": "2956548", "nascimento": "09/11/1998", "ctps": "8108356", "serie_ctps": "0040-RN", "pis": "162.15295.96-6", "banco": "341", "agencia": "0382", "conta": "28732-4", "tipo_conta": "Corrente"}, "13033775438": {"nome": "Islane Samille Lima Araújo", "cpf": "130.337.754-38", "is_advogado": false, "admissao": "2024-11-04", "cargo": "ESTAGIÁRIO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "islane.araujo@mendesemendes.com.br", "rg": "3646694", "nascimento": "2005-05-11", "ctps": "1303377", "serie_ctps": "5438-RN", "pis": "270.09633.07-5", "banco": "341", "agencia": "6530", "conta": "74935-4", "tipo_conta": "Corrente"}, "01093183403": {"nome": "Janaina Da Silva Avelar Batista", "cpf": "010.931.834-03", "is_advogado": false, "admissao": "2018-03-23", "cargo": "ASSISTENTE ADMINISTRATIVO", "equipe": "CONTROLADORIA", "gestor": "Wallace", "email_corp": "janaina.avelar@mendesemendes.com.br", "rg": "2117477", "nascimento": "24/02/1982", "ctps": "90516", "serie_ctps": "0016-RN", "pis": "128.35913.64-7", "banco": "341", "agencia": "0382", "conta": "71475-6", "tipo_conta": "Corrente"}, "08916267439": {"nome": "Janaina Nunes Da Rocha", "cpf": "089.162.674-39", "is_advogado": true, "admissao": "2022-03-09", "cargo": "SUPERVISOR", "equipe": "CALCULOS/AUDIENCIAS E CICLA", "gestor": "Damiana", "email_corp": "janaina.nunes@mendesemendes.com.br", "rg": "2353867", "nascimento": "1991-05-09", "ctps": "8107628", "serie_ctps": "0040-RN", "pis": "203.66905.67-2", "banco": "341", "agencia": "7123", "conta": "41080-0", "tipo_conta": "Poupança", "oab": "20681", "oab_uf": ""}, "08792774407": {"nome": "Jefeson de Almeira Rego", "cpf": "087.927.744-07", "is_advogado": false, "admissao": "2025-11-04", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "jefeson.almeida@mendesemendes.com.br", "rg": "", "nascimento": "1991-01-18", "ctps": "", "serie_ctps": "", "pis": ""}, "12392350469": {"nome": "Jessica Lanna Almeida Costa", "cpf": "123.923.504-69", "is_advogado": false, "admissao": "2026-01-07", "cargo": "SOCIAL MEDIA", "equipe": "MARKETING", "gestor": "Damiana", "email_corp": "jessica.costa@mendesemendes.com.br", "rg": "3660712", "nascimento": "1999-05-23", "ctps": "5733050", "serie_ctps": "0050-RN", "pis": "162.57692.96-3"}, "07979759427": {"nome": "Jessika Bandeira De Albuquerque", "cpf": "079.797.594-27", "is_advogado": true, "admissao": "2016-03-02", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "jessika.bandeira@mendesemendes.com.br", "rg": "2520583", "nascimento": "1991-01-07", "ctps": "9967758", "serie_ctps": "0010-RN", "pis": "130.80261.64-9", "banco": "341", "agencia": "3619", "conta": "11362-8", "tipo_conta": "Corrente", "oab": "23227", "oab_uf": ""}, "10841448400": {"nome": "João Eric Nasoli Nunes da Silva", "cpf": "108.414.484-00", "is_advogado": false, "admissao": "2025-06-23", "cargo": "ESTAGIÁRIO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "joao.nunes@mendesemendes.com.br", "rg": "3312040", "nascimento": "2003-11-21", "ctps": "1084144", "serie_ctps": "8400-RN", "pis": "140.21519.36-6", "banco": "341", "agencia": "6530", "conta": "91858-7", "tipo_conta": "Corrente"}, "09470693485": {"nome": "Jocimara Nascimento da Cruz", "cpf": "094.706.934-85", "is_advogado": false, "admissao": "2025-08-21", "cargo": "ESTAGIÁRIO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "jocimara.nascimento@mendesemendes.com.br", "rg": "3574959", "nascimento": "2000-01-31", "ctps": "947069", "serie_ctps": "3485-RN", "pis": "162.16338.51-0", "banco": "341", "agencia": "9314", "conta": "88147-6", "tipo_conta": "Corrente"}, "02816142450": {"nome": "Jorge Ibsen Lira da Nobrega", "cpf": "028.161.424-50", "is_advogado": false, "admissao": "2025-08-14", "cargo": "ADVOGADO JUNIOR", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "jorge.nobrega@mendesemendes.com.br", "rg": "1623144", "nascimento": "1978-01-22", "ctps": "281614", "serie_ctps": "2450-RN", "pis": "119.38951.69-1", "banco": "341", "agencia": "6530", "conta": "94507-7", "tipo_conta": "Corrente", "oab": "12169", "oab_uf": ""}, "07638789440": {"nome": "José Luiz Maia Cavalcanti Moreira Goulart Soffiatti", "cpf": "076.387.894-40", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIO", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "jose.soffiatti@mendesemendes.com.br", "rg": "3660037", "nascimento": "2005-08-16", "ctps": "763878", "serie_ctps": "9440-RN", "pis": "", "banco": "341", "agencia": "3224", "conta": "92409-1", "tipo_conta": "Corrente"}, "11858385466": {"nome": "Joyce Avelino Da Silva", "cpf": "118.583.854-66", "is_advogado": false, "admissao": "2021-01-08", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "joyce.silva@mendesemendes.com.br", "rg": "3660294", "nascimento": "20/10/2000", "ctps": "6532575", "serie_ctps": "0050-RN", "pis": "156.38639.77-6", "banco": "341", "agencia": "0382", "conta": "30984-7", "tipo_conta": "Corrente"}, "71014555493": {"nome": "Joyce Mendes de Brito", "cpf": "710.145.554-93", "is_advogado": false, "admissao": "2026-05-11", "cargo": "APRENDIZ", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "joyce.brito@mendesemendes.com.br", "rg": "710.145.554-93", "nascimento": "2007-03-17", "ctps": "7101455", "serie_ctps": "5493-RN", "pis": "163.42482.85-4", "banco": "341", "agencia": "995", "conta": "130526-3", "tipo_conta": "Corrente"}, "04821311445": {"nome": "Juliana Marinho Regis", "cpf": "048.213.114.45", "is_advogado": true, "admissao": "2020-09-02", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "juliana.marinho@mendesemendes.com.br", "rg": "2300700", "nascimento": "05/05/1986", "ctps": "9917115", "serie_ctps": "0050-RN", "pis": "131.55675.82-8", "banco": "341", "agencia": "6530", "conta": "45777-6", "tipo_conta": "Corrente", "oab": "8493", "oab_uf": ""}, "07598121443": {"nome": "Juliana Medeiros Do Nascimento", "cpf": "075.981.214-43", "is_advogado": true, "admissao": "2021-05-10", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "juliana.nascimento@mendesemendes.com.br", "rg": "1821206", "nascimento": "24/06/1989", "ctps": "595029", "serie_ctps": "0020-RN", "pis": "203.62802.10-0", "banco": "341", "agencia": "6530", "conta": "49362-3", "tipo_conta": "Corrente", "oab": "17874", "oab_uf": ""}, "07363867429": {"nome": "Kamila Lima Rufino Moura", "cpf": "073.638.674-29", "is_advogado": false, "admissao": "2013-01-07", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "kamila@mendesemendes.com.br", "rg": "2679095", "nascimento": "06/10/1987", "ctps": "1887345", "serie_ctps": "0030-RN", "pis": "132.75818.64-2", "banco": "341", "agencia": "9314", "conta": "00342-8", "tipo_conta": "Corrente"}, "10164590412": {"nome": "Karen Jully Da Silva Delfino", "cpf": "101.645.904-12", "is_advogado": true, "admissao": "2022-02-09", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "karen.delfino@mendesemendes.com.br", "rg": "1866187", "nascimento": "26/11/1992", "ctps": "1016459", "serie_ctps": "0412-RN", "pis": "201.51905.63-5", "banco": "341", "agencia": "9314", "conta": "59748-6", "tipo_conta": "Corrente", "oab": "15039", "oab_uf": ""}, "09997294467": {"nome": "Karla Juliane Paulino e Silva", "cpf": "099.972.944-67", "is_advogado": true, "admissao": "2025-03-19", "cargo": "ADVOGADO PLENO", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "karla.silva@mendesemendes.com.br", "rg": "2815290", "nascimento": "1992-08-26", "ctps": "2709523", "serie_ctps": "0030-RN", "pis": "203.49582.94-1", "oab": "20944", "oab_uf": ""}, "70393746410": {"nome": "Karoline Silva de Andrade", "cpf": "703.937.464-10", "is_advogado": false, "admissao": "2025-10-07", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "karoline.andrade@mendesemendes.com.br", "rg": "3453634", "nascimento": "2000-07-12", "ctps": "7039374", "serie_ctps": "6410-RN", "pis": "164.95477.16-4", "banco": "341", "agencia": "6998", "conta": "94452-1", "tipo_conta": "Corrente"}, "12459890494": {"nome": "Kellen Kethcylanne Pereira Cabral", "cpf": "124.598.904-94", "is_advogado": true, "admissao": "2023-10-16", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "kellen.cabral@mendesemendes.com.br", "rg": "3188635", "nascimento": "30/03/1998", "ctps": "1245989", "serie_ctps": "0494/RN", "pis": "164.31133.37-5", "banco": "341", "agencia": "8380", "conta": "46927-3", "tipo_conta": "Corrente", "oab": "19168", "oab_uf": ""}, "06510387409": {"nome": "Kelmen Caninde Moura Da Silva", "cpf": "065.103.874-09", "is_advogado": false, "admissao": "2023-08-03", "cargo": "ASSISTENTE JURÍDICO", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "kelmen.moura@mendesemendes.com.br", "rg": "1808753", "nascimento": "15/02/1987", "ctps": "5942203", "serie_ctps": "0010-RN", "pis": "129.18974.64-3", "banco": "341", "agencia": "1339", "conta": "61267-1", "tipo_conta": "Corrente"}, "09870902405": {"nome": "Lais Gabriela Alves De Freitas", "cpf": "098.709.024-05", "is_advogado": false, "admissao": "2017-02-13", "cargo": "ASSISTENTE ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "lais.freitas@mendesemendes.com.br", "rg": "3111225", "nascimento": "1995-05-05", "ctps": "3202294", "serie_ctps": "0040-RN", "pis": "212.76598.17-5", "banco": "341", "agencia": "8695", "conta": "36101-7", "tipo_conta": "Corrente"}, "09304447445": {"nome": "Lara Helen Ferreira Dantas", "cpf": "093.044.474-45", "is_advogado": false, "admissao": "2025-08-14", "cargo": "ADVOGADO JUNIOR", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "lara.dantas@mendesemendes.com.br", "rg": "2611015", "nascimento": "1998-09-03", "ctps": "930444", "serie_ctps": "7445-RN", "pis": "210.33326.98-6", "banco": "341", "agencia": "2887", "conta": "51684-3", "tipo_conta": "Corrente", "oab": "22914", "oab_uf": ""}, "08657356465": {"nome": "Larissa Dantas De Medeiros", "cpf": "086.573.564-65", "is_advogado": false, "admissao": "2023-08-03", "cargo": "ASSISTENTE JURÍDICO", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "larissa.medeiros@mendesemendes.com.br", "rg": "2925377", "nascimento": "26/02/1992", "ctps": "293954", "serie_ctps": "0030-RN", "pis": "132.32779.64-5", "banco": "341", "agencia": "9314", "conta": "73607-6", "tipo_conta": "Corrente"}, "70591381613": {"nome": "Larissa Vaz", "cpf": "705.913.816-13", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIA", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "larissa.vaz@mendesemendes.com.br", "rg": "23239375", "nascimento": "2005-02-27", "ctps": "7059138", "serie_ctps": "1613-RN", "pis": "269.93475.29-2", "banco": "341", "agencia": "6347", "conta": "324221-8", "tipo_conta": "Corrente"}, "11929846410": {"nome": "Laura Beatriz Gomes de Andrade", "cpf": "119.298.464-10", "is_advogado": false, "admissao": "2026-01-12", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "laura.andrade@mendesemendes.com.br", "rg": "3229590", "nascimento": "2000-04-19", "ctps": "1192984", "serie_ctps": "6410-RN", "pis": "150.29986.42-5", "banco": "341", "agencia": "0382", "conta": "60921-2", "tipo_conta": "Corrente", "oab": "23948", "oab_uf": ""}, "71308796455": {"nome": "Laura Beatriz Luna Maia", "cpf": "713.087.964-55", "is_advogado": false, "admissao": "2026-04-14", "cargo": "ESTAGIÁRIO", "equipe": "CONTROLADORIA", "gestor": "Wallace", "email_corp": "luna.maia@mendesemendes.com.br", "rg": "3750538", "nascimento": "2004-08-31", "ctps": "713087", "serie_ctps": "6455", "pis": ""}, "70050005448": {"nome": "Layse Fhiama Lima De Oliveira", "cpf": "700.500.054-48", "is_advogado": false, "admissao": "2024-03-11", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "layse.oliveira@mendesemendes.com.br", "rg": "3290757", "nascimento": "13/02/1997", "ctps": "4795198", "serie_ctps": "0040-RN", "pis": "207.46139.65-3", "banco": "341", "agencia": "2746", "conta": "82255-6", "tipo_conta": "Corrente"}, "13020867401": {"nome": "Layza Briana Círiaco Laurentino Cruz", "cpf": "130.208.674-01", "is_advogado": false, "admissao": "2026-05-11", "cargo": "APRENDIZ", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "layza.cruz@mendesemendes.com.br", "rg": "8200650", "nascimento": "2008-03-25", "ctps": "1302086", "serie_ctps": "7401-RN", "pis": "165.05480.75-8", "banco": "341", "agencia": "321", "conta": "249092-7", "tipo_conta": "Corrente"}, "70480546460": {"nome": "Layza Gabrielly Juvino da Silva", "cpf": "704.805.464-60", "is_advogado": false, "admissao": "2025-08-21", "cargo": "ESTAGIÁRIO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "layza.silva@mendesemendes.com.br", "rg": "3474749", "nascimento": "2003-07-30", "ctps": "7048054", "serie_ctps": "6460-RN", "pis": "", "banco": "341", "agencia": "7087", "conta": "30214-2", "tipo_conta": "Corrente"}, "05761203405": {"nome": "Leonardo Carvalho De Albuquerque", "cpf": "057.612.034-05", "is_advogado": true, "admissao": "2019-07-29", "cargo": "ADVOGADO SENIOR", "equipe": "AGING", "gestor": "Damiana", "email_corp": "leonardo.carvalho@mendesemendes.com.br", "rg": "5720281", "nascimento": "20/11/1984", "ctps": "66926", "serie_ctps": "0018-RN", "pis": "144.92071.77-2", "banco": "341", "agencia": "0382", "conta": "15737-8", "tipo_conta": "Corrente", "oab": "", "oab_uf": ""}, "01733924400": {"nome": "Leonardo Jackson Dos Santos Batista", "cpf": "017.339.244-00", "is_advogado": true, "admissao": "2021-03-22", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "leonardo.batista@mendesemendes.com.br", "rg": "2816016", "nascimento": "11/07/1995", "ctps": "6239307", "serie_ctps": "0030-RN", "pis": "164.35726.85-0", "banco": "341", "agencia": "0382", "conta": "31386-4", "tipo_conta": "Corrente", "oab": "18185", "oab_uf": ""}, "15694037758": {"nome": "Leonardo William Alvarenga Teles", "cpf": "156.940.377-58", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "leonardo.teles@mendesemendes.com.br", "rg": "3311203", "nascimento": "1994-07-31", "ctps": "1569403", "serie_ctps": "7758-RJ", "pis": "", "banco": "341", "agencia": "2821", "conta": "62603-1", "tipo_conta": "Corrente"}, "07503009497": {"nome": "Levy Tavares De Castro Ribeiro", "cpf": "075.030.094-97", "is_advogado": true, "admissao": "2022-11-23", "cargo": "ADVOGADO PLENO", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "levy.tavares@mendesemendes.com.br", "rg": "1898532", "nascimento": "1987-09-20", "ctps": "3163003", "serie_ctps": "0020-RN", "pis": "131.74945.64-9", "banco": "341", "agencia": "0382", "conta": "27380-3", "tipo_conta": "Corrente", "oab": "13048", "oab_uf": ""}, "10406781494": {"nome": "Leyliane Cacilda Araujo Silva", "cpf": "104.067.814-94", "is_advogado": true, "admissao": "2019-09-04", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "leyliane.silva@mendesemendes.com.br", "rg": "3056963", "nascimento": "07/12/1993", "ctps": "4887153", "serie_ctps": "0020/RN", "pis": "163.88343.98-9", "banco": "341", "agencia": "0382", "conta": "27616-0", "tipo_conta": "Poupança", "oab": "20739", "oab_uf": ""}, "12981866419": {"nome": "Lívia Karollayne Teixeira Santos", "cpf": "129.818.664-19", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIA", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "livia.santos@mendesemendes.com.br", "rg": "3875352", "nascimento": "2005-12-19", "ctps": "1298186", "serie_ctps": "6419-RN", "pis": "165.20173.76-3", "banco": "341", "agencia": "7207", "conta": "329006-9", "tipo_conta": "Corrente"}, "77295560220": {"nome": "Lorena Kato Coelho Bulhões", "cpf": "772.955.602-20", "is_advogado": true, "admissao": "2017-02-13", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "lorena.kato@mendesemendes.com.br", "rg": "4135826", "nascimento": "12/03/1983", "ctps": "91583", "serie_ctps": "0042-PA", "pis": "137.02745.67-9", "banco": "341", "agencia": "8695", "conta": "37651-0", "tipo_conta": "Poupança", "oab": "7647", "oab_uf": ""}, "09769758400": {"nome": "Luan Carlos Sampaio Barreto", "cpf": "097.697.584-00", "is_advogado": false, "admissao": "2025-01-23", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "luan.barreto@mendesemendes.com.br", "rg": "3332115", "nascimento": "2003-07-26", "ctps": "976975", "serie_ctps": "8400-RN", "pis": "156.45051.81-9", "banco": "341", "agencia": "6998 ", "conta": "85271-6", "tipo_conta": "Corrente"}, "05007192414": {"nome": "Luzemberg De Medeiros Brito", "cpf": "050.071.924-14", "is_advogado": true, "admissao": "2022-04-25", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "luzemberg.brito@mendesemendes.com.br", "rg": "2189042", "nascimento": "17/03/1984", "ctps": "500719", "serie_ctps": "2414-RN ", "pis": "267.52102.16-1", "banco": "341", "agencia": "6530", "conta": "56820-0", "tipo_conta": "Poupança", "oab": "10902", "oab_uf": ""}, "08190863479": {"nome": "Lysandra Rayssa da Silva", "cpf": "081.908.634-79", "is_advogado": true, "admissao": "2024-10-15", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "lysandra.silva@mendesemendes.com.br", "rg": "2510992", "nascimento": "29/08/1991", "ctps": "5732038", "serie_ctps": "0050-RN", "pis": "132.47567.44-4", "banco": "341", "agencia": "6530", "conta": "79479-8", "tipo_conta": "Corrente", "oab": "13318", "oab_uf": ""}, "71040251463": {"nome": "Manoel Messias Dos Anjos", "cpf": "710.402.514-63", "is_advogado": false, "admissao": "2021-03-22", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "manoel.anjos@mendesemendes.com.br", "rg": "3625547", "nascimento": "27/03/2000", "ctps": "4416489", "serie_ctps": "0050-RN", "pis": "204.219665.59-3", "banco": "341", "agencia": "0382", "conta": "31381-5", "tipo_conta": "Corrente"}, "06653245454": {"nome": "Maria Alice Lima Filgueira", "cpf": "066.532.454-54", "is_advogado": true, "admissao": "2024-10-01", "cargo": "ADVOGADO JUNIOR", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "maria.filgueira@mendesemendes.com.br", "rg": "2153396", "nascimento": "11/02/1994", "ctps": "763735", "serie_ctps": "0040-RN", "pis": "140.15094.45-6", "banco": "341", "agencia": "6530", "conta": "79143-0", "tipo_conta": "Poupança", "oab": "17067", "oab_uf": ""}, "10646501470": {"nome": "Maria Brenda Brunett Da Silva", "cpf": "106.465.014-70", "is_advogado": true, "admissao": "2021-09-20", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "brenda.brunett@mendesemendes.com.br", "rg": "3228787", "nascimento": "02/11/1993", "ctps": "7514455", "serie_ctps": "0040-RN", "pis": "204.63706.03-4", "banco": "341", "agencia": "7123", "conta": "41805-0", "tipo_conta": "Poupança", "oab": "20493", "oab_uf": ""}, "08214711479": {"nome": "Maria Eduarda Juvenal Coutinho", "cpf": "082.147.114-79", "is_advogado": false, "admissao": "2021-02-22", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "mariaeduarda.coutinho@mendesemendes.com.br", "rg": "2666697", "nascimento": "24/06/1995", "ctps": "6867703", "serie_ctps": "0040-RN", "pis": "212.84808.14-0", "banco": "341", "agencia": "0382", "conta": "31684-2", "tipo_conta": "Corrente"}, "13792115492": {"nome": "Maria Eduarda Pinheiro Messias", "cpf": "137.921.154-92", "is_advogado": false, "admissao": "2024-11-04", "cargo": "ESTAGIÁRIO", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "maria.messias@mendesemendes.com.br", "rg": "3790520", "nascimento": "2004-04-02", "ctps": "1379211", "serie_ctps": "5492-RN", "pis": "120.89546.96-6", "banco": "341", "agencia": "0382", "conta": "88169-6", "tipo_conta": "Corrente"}, "09008856450": {"nome": "Maria Eduarda Vital Cortez", "cpf": "090.088.564-50", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIA", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "eduarda.cortez@mendesemendes.com.br", "rg": "3118194", "nascimento": "2006-05-18", "ctps": "900885", "serie_ctps": "6450-RN", "pis": "270.64369.48-1", "banco": "341", "agencia": "2821", "conta": "62553-1", "tipo_conta": "Corrente"}, "70882186400": {"nome": "Maria Gabriela Araujo Maia", "cpf": "708.821.864-00", "is_advogado": false, "admissao": "2021-04-12", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "gabriela.maia@mendesemendes.com.br", "rg": "3568753", "nascimento": "02/10/2002", "ctps": "7088218", "serie_ctps": "6400-RN", "pis": "201.81335.66-7", "banco": "341", "agencia": "6998", "conta": "37267-3", "tipo_conta": "Corrente"}, "70337073473": {"nome": "Maria Helena Lins Ferreira", "cpf": "703.370.734-73", "is_advogado": false, "admissao": "2025-06-23", "cargo": "ESTAGIÁRIO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "maria.ferreira@mendesemendes.com.br", "rg": "3446111", "nascimento": "2001-07-08", "ctps": "7033707", "serie_ctps": "3473-RN", "pis": "153.59635.23-5", "banco": "341", "agencia": "6530", "conta": "91914-8", "tipo_conta": "Corrente"}, "01891753460": {"nome": "Maria Josineide Correia Da Silva Lyra", "cpf": "018.917.534-60", "is_advogado": false, "admissao": "2015-05-11", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "josineide@mendesemendes.com.br", "rg": "5033265", "nascimento": "30/11/1975", "ctps": "84248", "serie_ctps": "0042-RN", "pis": "127.16202.45-3", "banco": "341", "agencia": "0382", "conta": "17316-9", "tipo_conta": "Corrente"}, "01748709496": {"nome": "Maria Luiza Ferreira Albano Medeiros", "cpf": "017.487.094-96", "is_advogado": true, "admissao": "2023-10-16", "cargo": "SUPERVISOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "luiza.medeiros@mendesemendes.com.br", "rg": "3218476", "nascimento": "2000-07-26", "ctps": "174870", "serie_ctps": "9496-RN", "pis": "269.34102.51-5", "banco": "341", "agencia": "8380", "conta": "46966-1", "tipo_conta": "Corrente", "oab": "20685", "oab_uf": ""}, "09690292412": {"nome": "Maria Rayanne Barbosa De Souza", "cpf": "096.902.924-12", "is_advogado": false, "admissao": "2017-01-05", "cargo": "ASSISTENTE JURÍDICO", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "rayanne.barbosa@mendesemendes.com.br", "rg": "3009123", "nascimento": "12/03/1991", "ctps": "776", "serie_ctps": "0040-RN", "pis": "203.60381.42-6", "banco": "341", "agencia": "0382", "conta": "29664-8", "tipo_conta": "Corrente"}, "11173834400": {"nome": "Mariane Eulália Araújo de Souza", "cpf": "111.738.344-00", "is_advogado": false, "admissao": "2025-06-23", "cargo": "ESTAGIÁRIO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "mariane.souza@mendesemendes.com.br", "rg": "3345024", "nascimento": "2001-07-26", "ctps": "1117383", "serie_ctps": "4400-RN", "pis": "131.59094.43-9", "banco": "341", "agencia": "1650", "conta": "68369-9", "tipo_conta": "Corrente"}, "70065789490": {"nome": "Maryana Fonseca Damasio", "cpf": "700.657.894-90", "is_advogado": true, "admissao": "2025-01-20", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "maryana.damasio@mendesemendes.com.br", "rg": "2412487", "nascimento": "1997-10-29", "ctps": "7006578", "serie_ctps": "9490-RN", "pis": "271.09990.48-1", "banco": "341", "agencia": "6530", "conta": "77332-1", "tipo_conta": "Corrente", "oab": "23238", "oab_uf": ""}, "05328831446": {"nome": "Mauro Pereira Santos Filho", "cpf": "053.288.314-46", "is_advogado": true, "admissao": "2017-01-18", "cargo": "ADVOGADO SENIOR", "equipe": "RELEVANTE", "gestor": "Damiana", "email_corp": "mauro.pereira@mendesemendes.com.br", "rg": "2830900", "nascimento": "14/08/1984", "ctps": "4425356", "serie_ctps": "0050-RN", "pis": "141.01672.66-7", "banco": "341", "agencia": "0382", "conta": "20714-0", "tipo_conta": "Poupança", "oab": "9008", "oab_uf": ""}, "08247624443": {"nome": "Mayra De Oliveira Araújo", "cpf": "082.476.244-43", "is_advogado": true, "admissao": "2024-04-29", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "mayra.araujo@mendesemendes.com.br", "rg": "2847973", "nascimento": "30/03/1991", "ctps": "5739737", "serie_ctps": "0030-RN", "pis": "148.53877.27-0", "banco": "341", "agencia": "6530", "conta": "74240-9", "tipo_conta": "Corrente", "oab": "14538", "oab_uf": ""}, "08884118476": {"nome": "Micael Andre Floriano De Souza", "cpf": "088.841.184-76", "is_advogado": false, "admissao": "2023-10-17", "cargo": "ASSISTENTE ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "micael.souza@mendesemendes.com.br", "rg": "2249164", "nascimento": "30/08/1992", "ctps": "1803155", "serie_ctps": "0020-RN", "pis": "164.5235224-6", "banco": "341", "agencia": "9314", "conta": "74624-0", "tipo_conta": "Poupança"}, "13022247435": {"nome": "Millyane Shagyna Alves Nascimento", "cpf": "130.222.474-35", "is_advogado": false, "admissao": "2025-08-01", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "millyane.nascimento@mendesemendes.com.br", "rg": "3634451", "nascimento": "2001-12-02", "ctps": "1302224", "serie_ctps": "7435-RN", "pis": "165.18843.23-4", "banco": "341", "agencia": "9314", "conta": "80238-1", "tipo_conta": "Corrente"}, "07771062482": {"nome": "Monalisa Stephane Lopes Da Silva Guimaraes", "cpf": "077.710.624-82", "is_advogado": false, "admissao": "2014-11-11", "cargo": "ANALISTA FINANCEIRO", "equipe": "FINANCEIRO", "gestor": "Damiana", "email_corp": "monalisa@mendesemendes.com.br", "rg": "0361584720080/MA", "nascimento": "12/04/1989", "ctps": "9323541", "serie_ctps": "0030-RN", "pis": "165.49825.47-5", "banco": "341", "agencia": "8695", "conta": "33923-7", "tipo_conta": "Corrente"}, "10538263466": {"nome": "Mylena Beatriz Pontes De Medeiros", "cpf": "105.382.634-66", "is_advogado": true, "admissao": "2020-11-16", "cargo": "ADVOGADO PLENO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "mylena.medeiros@mendesemendes.com.br", "rg": "2594388", "nascimento": "17/12/1993", "ctps": "1757", "serie_ctps": "0040-RN", "pis": "201.72470.38-7", "banco": "341", "agencia": "6530", "conta": "47063-9", "tipo_conta": "Corrente", "oab": "16736", "oab_uf": ""}, "01812027435": {"nome": "Nadja Ariane Azevedo De França", "cpf": "018.120.274-35", "is_advogado": false, "admissao": "2020-01-21", "cargo": "ADVOGADA JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "nadja.franca@mendesemendes.com.br", "rg": "3267900", "nascimento": "2001-08-10", "ctps": "3082560", "serie_ctps": "0050- RN", "pis": "164.47552.44-5", "banco": "341", "agencia": "0382", "conta": "28640-9", "tipo_conta": "Corrente"}, "10904414442": {"nome": "Nagyla Joyce Rodrigues De Oliveira", "cpf": "109.044.144-42", "is_advogado": false, "admissao": "2020-01-22", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "nagyla.oliveira@mendesemendes.com.br", "rg": "3438209", "nascimento": "1995-07-27", "ctps": "2458671", "serie_ctps": "0040-RN", "pis": "159.02809.27-8", "banco": "341", "agencia": "0382", "conta": "28730-8", "tipo_conta": "Corrente"}, "04635730484": {"nome": "Nathalia Braz Gomes de Meneses", "cpf": "046.357.304-84", "is_advogado": false, "admissao": "2025-09-01", "cargo": "ASSISTENTE JURÍDICO", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "nathalia.meneses@mendesemendes.com.br", "rg": "1809188", "nascimento": "1995-10-28", "ctps": "463573", "serie_ctps": "0484-RN", "pis": "145.86301.57-7", "banco": "341", "agencia": "1339", "conta": "64574-7", "tipo_conta": "Corrente"}, "70519139488": {"nome": "Nathasha Laura de Souza Fernandes", "cpf": "705.191.394-88", "is_advogado": false, "admissao": "2025-07-10", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "nathasha.fernandes@mendesemendes.com.br", "rg": "3596617", "nascimento": "2001-03-09", "ctps": "7051913", "serie_ctps": "9488-RN", "pis": "", "banco": "341", "agencia": "0382", "conta": "60923-8", "tipo_conta": "Corrente"}, "08320437458": {"nome": "Nayara Gonçalves Pereira da Silva", "cpf": "083.204.374-58", "is_advogado": false, "admissao": "2024-09-18", "cargo": "ANALISTA DE RH", "equipe": "RECURSOS HUMANOS", "gestor": "Damiana", "email_corp": "nayara.silva@mendesemendes.com.br", "rg": "2658820", "nascimento": "25/03/1989", "ctps": "1782900", "serie_ctps": "0040-RN", "pis": "165.65475.71-8", "banco": "341", "agencia": "8380", "conta": "42537-4", "tipo_conta": "Corrente"}, "05114505408": {"nome": "Otávio Miguel Da Silva", "cpf": "051.145.054-08", "is_advogado": false, "admissao": "2019-03-18", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "otavio.silva@mendesemendes.com.br", "rg": "1790807", "nascimento": "05/12/1980", "ctps": "31439", "serie_ctps": "0014-RN", "pis": "128.52229.64-3", "banco": "341", "agencia": "0382", "conta": "26427-3", "tipo_conta": "Corrente"}, "10762899409": {"nome": "Pamela Venancio Melo Motta", "cpf": "107.628.994-09", "is_advogado": true, "admissao": "2023-08-03", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "pamela.motta@mendesemendes.com.br", "rg": "3810684", "nascimento": "1997-12-26", "ctps": "8109067", "serie_ctps": "0040-RN", "pis": "201.80998.80-8", "banco": "341", "agencia": "2746", "conta": "74111-1", "tipo_conta": "Corrente", "oab": "23239", "oab_uf": ""}, "10346522498": {"nome": "Patrícia Bernardo de Sales", "cpf": "103.465.224-98", "is_advogado": false, "admissao": "2026-02-02", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "patricia.sales@mendesemendes.com.br", "rg": "3498867", "nascimento": "1998-05-08", "ctps": "3086277", "serie_ctps": "0050-RN", "pis": "166.44937.01-3", "banco": "341", "agencia": "6530", "conta": "92327-2", "tipo_conta": "Corrente"}, "12085312470": {"nome": "Paulo Henrique Pinheiro de Souza", "cpf": "120.853.124-70", "is_advogado": false, "admissao": "2026-05-04", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "paulo.souza@mendesemendes.com.br", "rg": "3007258", "nascimento": "1997-09-15", "ctps": "1208531", "serie_ctps": "2470-RN", "pis": "151.60658.30-4", "banco": "341", "agencia": "7087", "conta": "26121-5", "tipo_conta": "Corrente"}, "05502939499": {"nome": "Pedro Henrique Barbosa da Costa", "cpf": "055.029.394-99", "is_advogado": false, "admissao": "2025-01-20", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "pedro.costa@mendesemendes.com.br", "rg": "3282019", "nascimento": "2000-07-26", "ctps": "550293", "serie_ctps": "9499-RN", "pis": "", "banco": "341", "agencia": "6530", "conta": "78630-7", "tipo_conta": "Corrente"}, "70436583496": {"nome": "Pollyana Vitoria Rocha do Nascimento", "cpf": "704.365.834-96", "is_advogado": false, "admissao": "2025-08-21", "cargo": "ESTAGIÁRIO", "equipe": "ENCERRAMENTO", "gestor": "Wallace", "email_corp": "pollyana.nascimento@mendesemendes.com.br", "rg": "33596370", "nascimento": "2005-08-27", "ctps": "7043658", "serie_ctps": "3496-RN", "pis": "", "banco": "341", "agencia": "7087", "conta": "30218-3", "tipo_conta": "Corrente"}, "01019302402": {"nome": "Priscila Kris Oliveira de Souza", "cpf": "010.193.024-02", "is_advogado": false, "admissao": "2025-10-01", "cargo": "ASSISTENTE JURÍDICO", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "priscila.souza@mendesemendes.com.br", "rg": "1978073", "nascimento": "1982-10-12", "ctps": "101930", "serie_ctps": "2402-RN", "pis": "170.62813.70-0", "banco": "341", "agencia": "3619", "conta": "22389-8", "tipo_conta": "Corrente"}, "00330959220": {"nome": "Rafael Ferreira De Souza", "cpf": "003.309.592-20", "is_advogado": true, "admissao": "2023-10-18", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "rafael.souza@mendesemendes.com.br", "rg": "22821120", "nascimento": "20/05/1989", "ctps": "6725227", "serie_ctps": "0050-AM", "pis": "202.06130.68-0", "banco": "341", "agencia": "1557", "conta": "69433-6", "tipo_conta": "Corrente", "oab": "17515", "oab_uf": ""}, "70124719481": {"nome": "Rafaela Isly de Carvalho Xavier", "cpf": "701.247.194-81", "is_advogado": false, "admissao": "2025-07-28", "cargo": "ESTAGIÁRIO", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "rafaela.xavier@mendesemendes.com.br", "rg": "2818944", "nascimento": "1996-09-29", "ctps": "2070909", "serie_ctps": "0040-RN", "pis": "209.22074.91-1"}, "05100390492": {"nome": "Renata Costa Soares Gurgel Da Nobrega", "cpf": "051.003.904-92", "is_advogado": true, "admissao": "2023-08-16", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "renata.nobrega@mendesemendes.com.br", "rg": "2093708", "nascimento": "26/11/1985", "ctps": "6035946", "serie_ctps": "0010-RN", "pis": "130.16426.64-0", "banco": "341", "agencia": "0382", "conta": "45694-5", "tipo_conta": "Corrente", "oab": "12746", "oab_uf": ""}, "01691103462": {"nome": "Ricardo Toscano Barros", "cpf": "016.911.034-62", "is_advogado": false, "admissao": "2024-04-24", "cargo": "ADVOGADO JUNIOR", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "ricardo.barros@mendesemendes.com.br", "rg": "3167244", "nascimento": "1997-01-29", "ctps": "169110", "serie_ctps": "3462-RN", "pis": "206.63511.15-6", "banco": "341", "agencia": "2746", "conta": "39407-7", "tipo_conta": "Corrente"}, "06480289412": {"nome": "Roseane Bezerra da Cruz", "cpf": "064.802.894-12", "is_advogado": true, "admissao": "2024-09-16", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "roseane.cruz@mendesemendes.com.br", "rg": "1818701", "nascimento": "06/11/1986", "ctps": "9328924", "serie_ctps": "0030-RN", "pis": "133.14260.64-3", "banco": "341", "agencia": "6530", "conta": "41418-1", "tipo_conta": "Corrente", "oab": "10529", "oab_uf": ""}, "09579781460": {"nome": "Rosyellen Pereira Da Silva", "cpf": "095.797.814-60", "is_advogado": false, "admissao": "2019-08-26", "cargo": "AUXILIAR ADMINISTRATIVO", "equipe": "ABERTURA", "gestor": "Wallace", "email_corp": "Rosyellen.silva@mendesemendes.com.br", "rg": "2594223", "nascimento": "06/05/1991", "ctps": "3480011", "serie_ctps": "0030-RN", "pis": "144.27337.27-5", "banco": "341", "agencia": "0382", "conta": "27501-4", "tipo_conta": "Corrente"}, "01317743440": {"nome": "Schneider Costa Tavares", "cpf": "013.177.434-40", "is_advogado": true, "admissao": "2021-05-19", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "schneider.tavares@mendesemendes.com.br", "rg": "1849875", "nascimento": "30/07/1981", "ctps": "96536", "serie_ctps": "0017-RN", "pis": "131.91257.85-2", "banco": "341", "agencia": "6530", "conta": "49452-2", "tipo_conta": "Corrente", "oab": "11713", "oab_uf": ""}, "11077307403": {"nome": "Shirlei Oliveira Da Silva", "cpf": "110.773.074-03", "is_advogado": false, "admissao": "2023-08-03", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "shirlei.oliveira@mendesemendes.com.br", "rg": "3233657", "nascimento": "08/03/1997", "ctps": "9580190", "serie_ctps": "0040-RN", "pis": "134.41583.83-2", "banco": "341", "agencia": "9189", "conta": "13263-3", "tipo_conta": "Corrente"}, "05483011406": {"nome": "Silvia Rafaelly Lira Da Silva", "cpf": "054.830.114-06", "is_advogado": true, "admissao": "2022-07-21", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "silvia.lira@mendesemendes.com.br", "rg": "2389888", "nascimento": "30/11/1984", "ctps": "2993573", "serie_ctps": "0010-RN", "pis": "128.11952.64-2", "banco": "341", "agencia": "0382", "conta": "36424-8", "tipo_conta": "Corrente", "oab": "9699", "oab_uf": ""}, "11765624444": {"nome": "Sofia Guedes Mendes", "cpf": "117.656.244-44", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIA", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "sofia.mendes@mendesemendes.com.br", "rg": "117.656.244-44", "nascimento": "2006-02-03", "ctps": "1176562", "serie_ctps": "4444-RN", "pis": "269.18614.99-0", "banco": "341", "agencia": "2821", "conta": "62558-2", "tipo_conta": "Corrente"}, "70846888467": {"nome": "Sofia Passio Gurgel de Carvalho Camilo", "cpf": "708.468.884-67", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIA", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "sofia.camilo@mendesemendes.com.br", "rg": "708.468.884-67", "nascimento": "2006-07-02", "ctps": "7084688", "serie_ctps": "8467-RN", "pis": "270.51897.36-0", "banco": "341", "agencia": "3224", "conta": "92398-2", "tipo_conta": "Corrente"}, "06386510429": {"nome": "Stephanie Oliveira Dantas Moreira", "cpf": "063.865.104-29", "is_advogado": true, "admissao": "2024-11-18", "cargo": "ADVOGADO JUNIOR", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "stephanie.moreira@mendesemendes.com.br", "rg": "2850727", "nascimento": "1986-03-05", "ctps": "638651", "serie_ctps": "0429-RN", "pis": "150.67848.81-6", "banco": "341", "agencia": "4986", "conta": "29672-3", "tipo_conta": "Corrente", "oab": "23517", "oab_uf": ""}, "09948625471": {"nome": "Thiago Emanoel dos Santos Nascimento", "cpf": "099.486.254-71", "is_advogado": false, "admissao": "2025-06-23", "cargo": "ESTAGIÁRIO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "thiago.nascimento@mendesemendes.com.br", "rg": "3092500", "nascimento": "2003-09-27", "ctps": "994862", "serie_ctps": "5471-RN", "pis": "270.71103.71-8", "banco": "341", "agencia": "7087", "conta": "26248-6", "tipo_conta": "Corrente"}, "06541162450": {"nome": "Thiago Miranda Gonçalves de Oliveira", "cpf": "065.411.624-50", "is_advogado": true, "admissao": "2024-10-01", "cargo": "ADVOGADO JUNIOR", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "thiago.goncalves@mendesemendes.com.br", "rg": "2172007", "nascimento": "02/01/1988", "ctps": "9968431", "serie_ctps": "0010-RN", "pis": "130.81134.64-0", "banco": "341", "agencia": "6530", "conta": "79427-7", "tipo_conta": "Corrente", "oab": "9379", "oab_uf": ""}, "06875571439": {"nome": "Thiago Petrovich Souza", "cpf": "068.755.714-39", "is_advogado": false, "admissao": "2025-11-04", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "thiago.souza@mendesemendes.com.br", "rg": "", "nascimento": "1986-12-19", "ctps": "", "serie_ctps": "", "pis": ""}, "01352753421": {"nome": "Vanessa Gomes da Silva", "cpf": "013.527.534-21", "is_advogado": false, "admissao": "2025-08-14", "cargo": "ADVOGADO JUNIOR", "equipe": "EXECUÇÃO", "gestor": "Joabe", "email_corp": "vanessa.silva@mendesemendes.com.br", "rg": "2287935", "nascimento": "2000-05-30", "ctps": "135275", "serie_ctps": "3421-RN", "pis": "166.30711.15-8", "banco": "341", "agencia": "7833", "conta": "51873-6", "tipo_conta": "Corrente", "oab": "23444", "oab_uf": ""}, "12166000401": {"nome": "Vinícius Gabriel Adeltrudes Sales", "cpf": "121.660.004-01", "is_advogado": false, "admissao": "2026-05-11", "cargo": "APRENDIZ", "equipe": "ACORDO", "gestor": "Luiza", "email_corp": "vinicius.sales@mendesemendes.com.br", "rg": "4109386", "nascimento": "2007-08-03", "ctps": "1216600", "serie_ctps": "0401-RN", "pis": "270.88760.78-4", "banco": "341", "agencia": "321", "conta": "249044-7", "tipo_conta": "Corrente"}, "10501778438": {"nome": "Wallace Giovanni Rodrigues Do Valle", "cpf": "105.017.784-38", "is_advogado": false, "admissao": "2024-07-01", "cargo": "SUPERVISOR", "equipe": "CONTROLADORIA", "gestor": "Damiana", "email_corp": "wallace.valle@mendesemendes.com.br", "rg": "2698766", "nascimento": "05/05/1994", "ctps": "760178", "serie_ctps": "0040-RN", "pis": "200.73444.81-7", "banco": "341", "agencia": "0382", "conta": "62454-2", "tipo_conta": "Corrente"}, "70230029442": {"nome": "Yasminy Annyelly Campos Paula", "cpf": "702.300.294-42", "is_advogado": false, "admissao": "2026-01-12", "cargo": "ADVOGADO JUNIOR", "equipe": "CÁLCULOS", "gestor": "Luiza", "email_corp": "yasminy.paula@mendesemendes.com.br", "rg": "3405234", "nascimento": "1999-12-28", "ctps": "7023002", "serie_ctps": "9442-RN", "pis": "204.48665.81-0", "banco": "341", "agencia": "6998", "conta": "79448-8", "tipo_conta": "Corrente", "oab": "24215", "oab_uf": ""}, "35773956802": {"nome": "Francisco Rafael Vieira Santos", "cpf": "357.739.568-02", "is_advogado": false, "admissao": "2026-04-14", "cargo": "ANALISTA DE DP", "equipe": "RECURSOS HUMANOS", "gestor": "Damiana", "email_corp": "rafael.vieira@mendesemendes.com.br", "rg": "", "nascimento": "", "ctps": "", "serie_ctps": "", "pis": ""}, "70050587471": {"nome": "Jotta Ferreira de Freitas Bulhões", "cpf": "700.505.874-71", "is_advogado": false, "admissao": "2025-01-20", "cargo": "ASSISTENTE JURÍDICO", "equipe": "ANÁLISE E AUDIÊNCIAS", "gestor": "Janaina", "email_corp": "jotta.bulhoes@mendesemendes.com.br"}, "12181535477": {"nome": "Lucas de Oliveira Câmara", "cpf": "121.815.354-77", "is_advogado": false, "admissao": "2025-10-13", "cargo": "ASSISTENTE DE MARKETING", "equipe": "MARKETING", "gestor": "Damiana", "email_corp": "lucas.camara@mendesemendes.com.br", "banco": "341", "agencia": "2746", "conta": "77161-3", "tipo_conta": "Corrente"}, "01732936463": {"nome": "Paulo Ovídio Andrade de Melo Júnior", "cpf": "017.329.364-63", "is_advogado": false, "admissao": "2026-05-11", "cargo": "ESTAGIÁRIO", "equipe": "INTERMEDIÁRIAS", "gestor": "Luiza", "email_corp": "paulo.melo@mendesemendes.com.br", "rg": "017.329.364-63", "nascimento": "1998-12-16", "ctps": "173293", "serie_ctps": "6463-RN", "pis": "", "banco": "341", "agencia": "3224", "conta": "92214-5", "tipo_conta": "Corrente"}, "70034477462": {"nome": "Thaiza de Souza Duarte", "cpf": "700.344.774-62", "is_advogado": true, "rg": "3088416", "nascimento": "02/04/1994", "ctps": "9328243", "serie_ctps": "0030-RN", "pis": "203.20792.27-1", "banco": "341", "agencia": "3619", "conta": "18992-5", "tipo_conta": "Corrente", "oab": "22431", "oab_uf": "", "admissao": "2022-07-04", "cargo": "ADVOGADO JUNIOR", "equipe": "DEFESA", "gestor": "Helena", "email_corp": "thaiza.duarte@mendesemendes.com.br"}};
+
+// ═══════════════════════════════════════════════
+let colaboradorAtual = null;
+let depCount = 0;
+
+// Máscara CPF
+document.getElementById('campo-cpf').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'');
+  if(v.length > 11) v = v.slice(0,11);
+  if(v.length > 9) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6,9)+'-'+v.slice(9);
+  else if(v.length > 6) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+  else if(v.length > 3) v = v.slice(0,3)+'.'+v.slice(3);
+  this.value = v;
+});
+document.getElementById('campo-cpf').addEventListener('keydown', function(e) {
+  if(e.key === 'Enter') buscarCPF();
+});
+
+function mascaraCEP(el) {
+  let v = el.value.replace(/\D/g,'').slice(0,8);
+  if(v.length > 5) v = v.slice(0,5)+'-'+v.slice(5);
+  el.value = v;
+}
+
+function limparCPF(cpf) {
+  return cpf.replace(/\D/g,'');
+}
+
+function buscarCPF() {
+  const cpf = limparCPF(document.getElementById('campo-cpf').value);
+  const erro = document.getElementById('erro-cpf');
+  if(!DB[cpf]) {
+    erro.style.display = 'block';
+    return;
+  }
+  erro.style.display = 'none';
+  colaboradorAtual = { cpf, ...DB[cpf] };
+  preencherFormulario();
+}
+
+function preencherFormulario() {
+  const c = colaboradorAtual;
+
+  // Card topo
+  document.getElementById('card-nome').textContent = c.nome;
+  document.getElementById('card-avatar').textContent = c.nome.charAt(0);
+  document.getElementById('card-info').textContent = 'Admissão: ' + formatarData(c.admissao) + ' · Equipe: ' + (c.equipe || '—');
+  document.getElementById('card-cargo').textContent = c.cargo || '—';
+
+  // Seção 1 — Pessoal
+  setVal('f-nome', c.nome);
+  setVal('f-cpf', c.cpf);
+  setVal('f-pis', c.pis || '');
+  setDateVal('f-nascimento', c.nascimento);
+
+  // Seção 2 — Documentos
+  setVal('f-rg', c.rg || '');
+  setVal('f-ctps', c.ctps || '');
+  setVal('f-ctps-serie', c.serie_ctps || '');
+
+  // OAB
+  if(c.is_advogado) {
+    document.getElementById('bloco-oab').style.display = 'block';
+    setVal('f-oab', c.oab || '');
+  }
+
+  // Seção 4 — Funcional
+  setSelectVal('f-departamento', c.equipe);
+  setVal('f-cargo', c.cargo || '');
+  setDateVal('f-admissao', c.admissao);
+
+  // Seção 5 — Contato
+  setVal('f-email-corp', c.email_corp || '');
+
+  // Seção 6 — Bancário
+  setVal('f-agencia', c.agencia || '');
+  setVal('f-conta', c.conta || '');
+  if(c.tipo_conta) setSelectVal('f-tipo-conta', c.tipo_conta);
+
+  // Mostrar/ocultar reservista após seleção de sexo
+  document.getElementById('f-sexo').addEventListener('change', function() {
+    document.getElementById('bloco-reservista').style.display =
+      this.value === 'Masculino' ? 'block' : 'none';
+  });
+
+  // Exibe formulário
+  document.getElementById('bloco-acesso').style.display = 'none';
+  document.getElementById('bloco-formulario').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function setVal(id, val) {
+  const el = document.getElementById(id);
+  if(el && val) el.value = val;
+}
+function setSelectVal(id, val) {
+  const el = document.getElementById(id);
+  if(!el || !val) return;
+  for(let opt of el.options) {
+    if(opt.value.toUpperCase() === val.toUpperCase() || opt.text.toUpperCase() === val.toUpperCase()) {
+      el.value = opt.value;
+      return;
+    }
+  }
+}
+function setDateVal(id, val) {
+  if(!val) return;
+  const el = document.getElementById(id);
+  if(!el) return;
+  // formatos: YYYY-MM-DD ou DD/MM/YYYY
+  if(/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+    el.value = val;
+  } else if(/^\d{2}\/\d{2}\/\d{4}$/.test(val)) {
+    const [d,m,y] = val.split('/');
+    el.value = `${y}-${m}-${d}`;
+  }
+}
+function formatarData(val) {
+  if(!val) return '—';
+  if(/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+    const [y,m,d] = val.split('-');
+    return `${d}/${m}/${y}`;
+  }
+  return val;
+}
+
+function sair() {
+  colaboradorAtual = null;
+  document.getElementById('bloco-acesso').style.display = 'block';
+  document.getElementById('bloco-formulario').style.display = 'none';
+  document.getElementById('campo-cpf').value = '';
+}
+
+function toggleSecao(id) {
+  document.getElementById(id).classList.toggle('fechado');
+}
+function toggleCNH(el) {
+  document.getElementById('campos-cnh').style.display = el.value === 'sim' ? 'block' : 'none';
+}
+function toggleDef(el) {
+  document.getElementById('campos-def').style.display = el.value === 'sim' ? 'block' : 'none';
+}
+function toggleDep(el) {
+  const cont = document.getElementById('lista-dependentes');
+  cont.style.display = el.value === 'sim' ? 'block' : 'none';
+  if(el.value === 'sim' && depCount === 0) adicionarDependente();
+}
+
+// Tipos de dependente eSocial
+const TIPOS_DEP = [
+  'Cônjuge','Companheiro(a) com filhos','Companheiro(a) sem filhos',
+  'Filho(a) até 21 anos','Filho(a) universitário(a)','Filho(a) inválido(a)',
+  'Irmão(ã)/neto(a)/bisneto(a) com guarda','Irmão(ã)/neto(a)/bisneto(a) sem guarda',
+  'Pais e sogros','Avós','Menor sob guarda/tutela','Ex-cônjuge com pensão',
+  'Agregado/outros','Dependente inválido'
+];
+
+function adicionarDependente() {
+  depCount++;
+  const n = depCount;
+  const container = document.getElementById('dep-container');
+  const div = document.createElement('div');
+  div.className = 'dependente-card';
+  div.id = `dep-${n}`;
+  const opts = TIPOS_DEP.map(t => `<option>${t}</option>`).join('');
+  div.innerHTML = `
+    <div class="dep-num">Dependente ${n}</div>
+    <button type="button" class="btn-remover" onclick="removerDep(${n})">✕ Remover</button>
+    <div class="grid grid-2">
+      <div class="campo" style="grid-column:span 2">
+        <label>Nome Completo <span class="req">*</span></label>
+        <input type="text" id="dep-${n}-nome" placeholder="Nome do dependente">
+      </div>
+      <div class="campo">
+        <label>Data de Nascimento <span class="req">*</span></label>
+        <input type="date" id="dep-${n}-nasc">
+      </div>
+      <div class="campo">
+        <label>CPF</label>
+        <input type="text" id="dep-${n}-cpf" placeholder="000.000.000-00">
+      </div>
+      <div class="campo" style="grid-column:span 2">
+        <label>Tipo de Dependência (eSocial) <span class="req">*</span></label>
+        <select id="dep-${n}-tipo">
+          <option value="">— Selecione —</option>
+          ${opts}
+        </select>
+      </div>
+    </div>`;
+  container.appendChild(div);
+}
+function removerDep(n) {
+  const el = document.getElementById(`dep-${n}`);
+  if(el) el.remove();
+}
+
+function enviarFormulario() {
+  const c = colaboradorAtual;
+  if(!c) return;
+
+  // Coleta
+  const dados = {
+    cpf: c.cpf,
+    nome: document.getElementById('f-nome').value,
+    pis: document.getElementById('f-pis').value,
+    nascimento: document.getElementById('f-nascimento').value,
+    municipio_nasc: document.getElementById('f-municipio-nasc').value,
+    uf_nasc: document.getElementById('f-uf-nasc').value,
+    sexo: document.getElementById('f-sexo').value,
+    estado_civil: document.getElementById('f-estado-civil').value,
+    raca: document.getElementById('f-raca').value,
+    instrucao: document.getElementById('f-instrucao').value,
+    tipo_sanguineo: document.getElementById('f-tipo-sanguineo').value,
+    mae: document.getElementById('f-mae').value,
+    pai: document.getElementById('f-pai').value,
+    rg: document.getElementById('f-rg').value,
+    rg_orgao: document.getElementById('f-rg-orgao').value,
+    rg_uf: document.getElementById('f-rg-uf').value,
+    rg_data: document.getElementById('f-rg-data').value,
+    ctps: document.getElementById('f-ctps').value,
+    ctps_serie: document.getElementById('f-ctps-serie').value,
+    titulo: document.getElementById('f-titulo').value,
+    titulo_zona: document.getElementById('f-titulo-zona').value,
+    titulo_secao: document.getElementById('f-titulo-secao').value,
+    cert_tipo: document.getElementById('f-certidao-tipo').value,
+    cert_termo: document.getElementById('f-cert-termo').value,
+    cert_livro: document.getElementById('f-cert-livro').value,
+    cert_folha: document.getElementById('f-cert-folha').value,
+    cert_cartorio: document.getElementById('f-cert-cartorio').value,
+    cert_municipio: document.getElementById('f-cert-municipio').value,
+    cert_uf: document.getElementById('f-cert-uf').value,
+    cert_data: document.getElementById('f-cert-data').value,
+    reservista_num: document.getElementById('f-reservista-num').value,
+    reservista_cat: document.getElementById('f-reservista-cat').value,
+    oab: document.getElementById('f-oab').value,
+    oab_uf: document.getElementById('f-oab-uf').value,
+    cnh: document.querySelector('input[name="tem-cnh"]:checked')?.value,
+    cnh_num: document.getElementById('f-cnh-num').value,
+    cnh_cat: document.getElementById('f-cnh-cat').value,
+    cnh_orgao: document.getElementById('f-cnh-orgao').value,
+    cnh_uf: document.getElementById('f-cnh-uf').value,
+    cnh_prim: document.getElementById('f-cnh-prim').value,
+    cnh_expedicao: document.getElementById('f-cnh-expedicao').value,
+    cnh_vencimento: document.getElementById('f-cnh-vencimento').value,
+    departamento: document.getElementById('f-departamento').value,
+    email_pessoal: document.getElementById('f-email-pessoal').value,
+    celular: document.getElementById('f-celular').value,
+    cep: document.getElementById('f-cep').value,
+    logradouro: document.getElementById('f-logradouro').value,
+    numero_end: document.getElementById('f-numero').value,
+    complemento: document.getElementById('f-complemento').value,
+    bairro: document.getElementById('f-bairro').value,
+    cidade: document.getElementById('f-cidade').value,
+    uf_end: document.getElementById('f-uf-end').value,
+    agencia: document.getElementById('f-agencia').value,
+    conta: document.getElementById('f-conta').value,
+    tipo_conta: document.getElementById('f-tipo-conta').value,
+    deficiencia: document.querySelector('input[name="tem-def"]:checked')?.value,
+    def_fisica: document.getElementById('def-fisica').checked,
+    def_visual: document.getElementById('def-visual').checked,
+    def_auditiva: document.getElementById('def-auditiva').checked,
+    def_mental: document.getElementById('def-mental').checked,
+    def_intelectual: document.getElementById('def-intelectual').checked,
+    def_outras: document.getElementById('def-outras').checked,
+    def_reabilitado: document.getElementById('def-reabilitado').checked,
+    dependentes: []
+  };
+
+  // Dependentes
+  for(let i=1; i<=depCount; i++) {
+    const el = document.getElementById(`dep-${i}`);
+    if(el) {
+      dados.dependentes.push({
+        nome: document.getElementById(`dep-${i}-nome`)?.value || '',
+        nasc: document.getElementById(`dep-${i}-nasc`)?.value || '',
+        cpf:  document.getElementById(`dep-${i}-cpf`)?.value || '',
+        tipo: document.getElementById(`dep-${i}-tipo`)?.value || ''
+      });
+    }
+  }
+
+  // Envia para Google Sheets
+  const btn = document.querySelector('.btn-enviar');
+  btn.textContent = '⏳ Enviando...';
+  btn.disabled = true;
+
+  fetch('https://script.google.com/macros/s/AKfycbxi9IEJZGWKxejipMvxrbh08SjyVN95ZLLfCg-wTmGczMts_s2hHRwV23KQfp5w90G9-A/exec', {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dados)
+  })
+  .then(() => {
+    document.getElementById('bloco-formulario').style.display = 'none';
+    document.getElementById('bloco-sucesso').style.display = 'block';
+    window.scrollTo(0,0);
+  })
+  .catch(() => {
+    btn.textContent = '✓ Confirmar e Enviar';
+    btn.disabled = false;
+    alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
+  });
+}
+</script>
+</body>
+</html>
